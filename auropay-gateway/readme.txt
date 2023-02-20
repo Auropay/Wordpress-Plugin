@@ -28,7 +28,7 @@ Developed by AuroPay.net
 
 == Configuration ==
 
-1. Visit the Auropay settings page
+1. Visit the Auropay settings page.
 2. Click on Auropay to edit the settings. 
 3. Add shortcode [AURP] to add the pay button 
 
