@@ -15,21 +15,26 @@ if (!defined('ABSPATH')) {
 
 global $wp;
 
-if (isset($_REQUEST['refNo'])) {
+if (isset($_REQUEST['refNo']) && isset($_REQUEST['page_id']) && isset($_REQUEST['id'])) {
     $order_id = 0;
     $transaction_id = 0;
     $order_id = $_REQUEST['refNo'];
     $transaction_id = $_REQUEST['id'];
     $page_id = $_REQUEST['page_id'];
     $redirect_url = home_url('/') . '?page_id=' . $page_id;
-    $status = Auropay_Api::apGetPaymentStatus($transaction_id, $order_id);
+    $status = ARP_Payment_Api::arp_get_payment_status($transaction_id, $order_id);
 
-    if ($status == "Success") {
-        update_post_meta($order_id, '_auropay_order_status', $status);
+    if ($status == "Authorized") {
+        update_post_meta($order_id, ARP_ORDER_STATUS, $status);
         echo '<script>alert("Payment was successfully processed by Auropay Payments")</script>';
     } else {
-        update_post_meta($order_id, '_auropay_order_status', 'Failed');
-        echo '<script>alert("Payment failed")</script>';
+        if ('Fail' != $status) {
+            update_post_meta($order_id, ARP_ORDER_STATUS, $status);
+            echo '<script>alert("Payment failed")</script>';
+        } else {
+            update_post_meta($order_id, ARP_ORDER_STATUS, 'Failed');
+            echo '<script>alert("Payment failed")</script>';
+        }
     }
 
     echo '<script>'

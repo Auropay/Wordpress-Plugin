@@ -66,7 +66,7 @@ a {
 }
 
 .success {
-  color: green;
+  background: green;
 }
 
 .failed {
@@ -812,4 +812,27 @@ span.bank-logo {
 
 .BK069 {
   background-position-x: -3400px;
+}
+
+.order-status{
+  padding: 0 10px;
+  display: inline-flex;
+  line-height: 2.5em;
+  border-radius: 4px;
+}
+
+.del-img {
+  margin: -25px 5px 10px 0px;
+  display: none;
+  position: relative;
+  right: -385px;
+  top: 15px;
+}
+
+.iframe-cs {
+  width: 410px;
+  height: 550px;
+  border: none;
+  overflow: hidden;
+  margin: 10px;
 }
