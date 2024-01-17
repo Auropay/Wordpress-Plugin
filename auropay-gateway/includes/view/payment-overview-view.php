@@ -1,5 +1,7 @@
 <?php
-
+ini_set('display_errors','Off');
+define('WP_DEBUG', false);
+define('WP_DEBUG_DISPLAY', false);
 /**
  * An external standard for Auropay.
  *
@@ -51,9 +53,9 @@ $arp_status_color = array(
 									<?php
 									foreach ($ranges as $range => $name) {
 										if ($name != 'Custom') {
-											echo '<li class="' . ($current_range == $range ? 'active' : '') . ' odate_range" id="' . $range . '"><a href="' . esc_url(remove_query_arg(array('start_date', 'end_date'), add_query_arg('range', $range))) . '">' . esc_html($name) . '</a></li>';
+											echo '<li class="' . ($current_range == $range ? 'active' : '') . ' odate_range" id="' . $range . '"><a href="' . esc_url(remove_query_arg(array('start_date', 'end_date'), add_query_arg('range', $range))) . '">' . esc_html($name,'auropay-gateway') . '</a></li>';
 										} else {
-											echo '<li class="' . ($current_range == $range ? 'active' : '') . ' custom_range" id="custom" ><a href="#" >' . esc_html($name) . '</a></li>';
+											echo '<li class="' . ($current_range == $range ? 'active' : '') . ' custom_range" id="custom" ><a href="#" >' . esc_html($name,'auropay-gateway') . '</a></li>';
 										}
 									}
 									?>
@@ -61,23 +63,56 @@ $arp_status_color = array(
 										<form method="GET">
 											<div>
 												<?php
-												// Maintain query string.
-												foreach ($_GET as $key => $value) {
-													if (is_array($value)) {
-														foreach ($value as $v) {
-															echo '<input type="hidden" name="' . esc_attr(sanitize_text_field($key)) . '[]" value="' . esc_attr(sanitize_text_field($v)) . '" />';
-														}
-													} else {
-														echo '<input type="hidden" name="' . esc_attr(sanitize_text_field($key)) . '" value="' . esc_attr(sanitize_text_field($value)) . '" />';
-													}
+																								
+												if (isset($_GET['page'])) {
+													echo '<input type="hidden" name="page" value="' . esc_attr(sanitize_text_field($_GET['page'])) . '" />';
 												}
+
+												if (isset($_GET['orderby'])) {
+													echo '<input type="hidden" name="orderby" value="' . esc_attr(sanitize_text_field($_GET['orderby'])) . '" />';
+												}
+
+												if (isset($_GET['order'])) {
+													echo '<input type="hidden" name="order" value="' . esc_attr(sanitize_text_field($_GET['order'])) . '" />';
+												}
+
+												if (isset($_GET['transaction_status'])) {
+													echo '<input type="hidden" name="transaction_status" value="' . esc_attr(sanitize_text_field($_GET['transaction_status'])) . '" />';
+												}
+
+												if (isset($_GET['range']) && !is_array($_GET['range'])) {
+													echo '<input type="hidden" name="range" value="' . esc_attr(sanitize_text_field($_GET['range'])) . '" />';
+												}
+
+												if (isset($_GET['range']) && is_array($_GET['range'])) {
+													echo '<input type="hidden" name="range" value="custom" />';
+													echo '<input type="hidden" name="start_date" value="' . esc_attr(sanitize_text_field($_GET['range']['start_date'])) . '" />';
+													echo '<input type="hidden" name="end_date" value="' . esc_attr(sanitize_text_field($_GET['range']['end_date'])) . '" />';
+												}
+
 												?>
 												<input type="hidden" name="range" value="custom" />
+
+												<?php
+													if(isset($_GET['start_date'])) {
+														$pickerStartDate = wp_unslash($_GET['start_date']);
+													} else {
+														$pickerStartDate = '';
+													} 
+
+													if(isset($_GET['end_date'])) {
+														$pickerEndDate = wp_unslash($_GET['end_date']);
+													} else {
+														$pickerEndDate = '';
+													} 
+
+
+												?>
 												<span> From: </span>
-												<input type="text" size="20" id="from_datepicker" placeholder="yyyy-mm-dd" value="<?php echo (!empty($_GET['start_date'])) ? esc_attr(wp_unslash($_GET['start_date'])) : ''; ?>" name="start_date" class="range_datepicker from" autocomplete="off" /><?php //@codingStandardsIgnoreLine 
+												<input type="text" size="20" id="from_datepicker" placeholder="yyyy-mm-dd" value="<?php echo esc_attr($pickerStartDate); ?>" name="start_date" class="range_datepicker from" autocomplete="off" /><?php //@codingStandardsIgnoreLine 
 																																																																										?>
 												<span> To: </span>
-												<input type="text" size="20" id="to_datepicker" placeholder="yyyy-mm-dd" value="<?php echo (!empty($_GET['end_date'])) ? esc_attr(wp_unslash($_GET['end_date'])) : ''; ?>" name="end_date" class="range_datepicker to" autocomplete="off" /><?php //@codingStandardsIgnoreLine 
+												<input type="text" size="20" id="to_datepicker" placeholder="yyyy-mm-dd" value="<?php echo esc_attr($pickerEndDate) ; ?>" name="end_date" class="range_datepicker to" autocomplete="off" /><?php //@codingStandardsIgnoreLine 
 																																																																							?>
 												<button type="submit" class="button-go" value="Go">Go</button>
 											</div>
@@ -93,7 +128,7 @@ $arp_status_color = array(
 							?>
 							<div class="pymnt-hdr">
 								<div class="leftbox-sales" id="sale_box">
-									<img class="pymnt-ico" src="<?php echo ARP_PLUGIN_URL ?>/assets/images/summary/calculator_color.png" id="sale_img" alt="Sales" />
+									<img class="pymnt-ico" src="<?php echo esc_url(ARP_PLUGIN_URL) ?>/assets/images/summary/calculator_color.png" id="sale_img" alt="Sales" />
 									<div class="pymnt-ico-label">
 										<div class="pymnt-label">
 											<strong> Sales</strong>
@@ -104,7 +139,7 @@ $arp_status_color = array(
 									</div>
 								</div>
 								<div class="middlebox-refund" id="refunded_box">
-									<img class="pymnt-ico" src="<?php echo ARP_PLUGIN_URL ?>/assets/images/summary/calendar_refund_color.png" id="refunded_img" alt="Refund" />
+									<img class="pymnt-ico" src="<?php echo esc_url(ARP_PLUGIN_URL) ?>/assets/images/summary/calendar_refund_color.png" id="refunded_img" alt="Refund" />
 									<div class="pymnt-ico-label">
 										<div class="pymnt-label">
 											<strong>Refund</strong>
@@ -115,7 +150,7 @@ $arp_status_color = array(
 									</div>
 								</div>
 								<div class="rightbox-failed" id="failed_box">
-									<img class="pymnt-ico" src="<?php echo ARP_PLUGIN_URL ?>/assets/images/summary/calendar_decline_color.png" id="failed_img" alt="Failed" />
+									<img class="pymnt-ico" src="<?php echo esc_url(ARP_PLUGIN_URL) ?>/assets/images/summary/calendar_decline_color.png" id="failed_img" alt="Failed" />
 									<div class="pymnt-ico-label">
 										<div class="pymnt-label">
 											<strong>Failed</strong>
@@ -133,63 +168,63 @@ $arp_status_color = array(
 										Sales
 									</div>
 									<div class="card-label" id="sales_stat_details">
-										<img alt="Credit Card" class="ico-crd" src="<?php echo ARP_PLUGIN_URL ?>/assets/images/cards/ico-card.png" />
+										<img alt="Credit Card" class="ico-crd" src="<?php echo esc_url(ARP_PLUGIN_URL) ?>/assets/images/cards/ico-card.png" />
 										<span><strong>Credit Card </strong>
-											<?php echo $all_order_data['sale_tot_credit_card_payments']; ?>
+											<?php echo esc_html($all_order_data['sale_tot_credit_card_payments']); ?>
 											&nbsp;&nbsp;</span>
-										<img alt="Debit Card" class="ico-crd" src="<?php echo ARP_PLUGIN_URL ?>/assets/images/cards/ico-card.png" />
+										<img alt="Debit Card" class="ico-crd" src="<?php echo esc_url(ARP_PLUGIN_URL) ?>/assets/images/cards/ico-card.png" />
 										<span><strong>Debit Card
-											</strong><?php echo $all_order_data['sale_tot_debit_card_payments']; ?>
+											</strong><?php echo esc_html($all_order_data['sale_tot_debit_card_payments']); ?>
 											&nbsp;&nbsp;</span>
-										<img alt="Net Banking" class="ico-nb" src="<?php echo ARP_PLUGIN_URL ?>/assets/images/cards/ico-ach.png" />
+										<img alt="Net Banking" class="ico-nb" src="<?php echo esc_url(ARP_PLUGIN_URL) ?>/assets/images/cards/ico-ach.png" />
 										<span><strong>Net Banking
-											</strong><?php echo $all_order_data['sale_tot_netbanking_payments']; ?></span>
-										<img alt="UPI" class="ico-upi" src="<?php echo ARP_PLUGIN_URL ?>/assets/images/cards/ico-upi.png" />
+											</strong><?php echo esc_html($all_order_data['sale_tot_netbanking_payments']); ?></span>
+										<img alt="UPI" class="ico-upi" src="<?php echo esc_url(ARP_PLUGIN_URL) ?>/assets/images/cards/ico-upi.png" />
 										<span><strong>UPI
-											</strong><?php echo $all_order_data['sale_tot_upi_payments']; ?></span>
-										<img alt="Wallet" class="ico-upi" src="<?php echo ARP_PLUGIN_URL ?>/assets/images/cards/ico-wallet.png" />
+											</strong><?php echo esc_html($all_order_data['sale_tot_upi_payments']); ?></span>
+										<img alt="Wallet" class="ico-upi" src="<?php echo esc_url(ARP_PLUGIN_URL) ?>/assets/images/cards/ico-wallet.png" />
 										<span><strong>Wallet
-											</strong><?php echo $all_order_data['sale_tot_wallet_payments']; ?></span>
+											</strong><?php echo esc_html($all_order_data['sale_tot_wallet_payments']); ?></span>
 									</div>
 
 									<div class="card-label" id="refunded-stat-details">
-										<img alt="Credit Card" class="ico-crd" src="<?php echo ARP_PLUGIN_URL ?>/assets/images/cards/ico-card.png" />
+										<img alt="Credit Card" class="ico-crd" src="<?php echo esc_url(ARP_PLUGIN_URL) ?>/assets/images/cards/ico-card.png" />
 										<span><strong>Credit Card </strong>
-											<?php echo $all_order_data['refunded_tot_credit_card_payments']; ?>
+											<?php echo esc_html($all_order_data['refunded_tot_credit_card_payments']); ?>
 											&nbsp;&nbsp;</span>
-										<img alt="Debit Card" class="ico-crd" src="<?php echo ARP_PLUGIN_URL ?>/assets/images/cards/ico-card.png" />
+										<img alt="Debit Card" class="ico-crd" src="<?php echo esc_url(ARP_PLUGIN_URL) ?>/assets/images/cards/ico-card.png" />
 										<span><strong>Debit Card
-											</strong><?php echo $all_order_data['refunded_tot_debit_card_payments']; ?>
+											</strong><?php echo esc_html($all_order_data['refunded_tot_debit_card_payments']); ?>
 											&nbsp;&nbsp;</span>
-										<img alt="Net Banking" class="ico-nb" src="<?php echo ARP_PLUGIN_URL ?>/assets/images/cards/ico-ach.png" />
+										<img alt="Net Banking" class="ico-nb" src="<?php echo esc_url(ARP_PLUGIN_URL) ?>/assets/images/cards/ico-ach.png" />
 										<span><strong>Net Banking
-											</strong><?php echo $all_order_data['refunded_tot_netbanking_payments']; ?></span>
-										<img alt="UPI" class="ico-upi" src="<?php echo ARP_PLUGIN_URL ?>/assets/images/cards/ico-upi.png" />
+											</strong><?php echo esc_html($all_order_data['refunded_tot_netbanking_payments']); ?></span>
+										<img alt="UPI" class="ico-upi" src="<?php echo esc_url(ARP_PLUGIN_URL) ?>/assets/images/cards/ico-upi.png" />
 										<span><strong>UPI
-											</strong><?php echo $all_order_data['refunded_tot_upi_payments']; ?></span>
-										<img alt="Wallet" class="ico-upi" src="<?php echo ARP_PLUGIN_URL ?>/assets/images/cards/ico-wallet.png" />
+											</strong><?php echo esc_html($all_order_data['refunded_tot_upi_payments']); ?></span>
+										<img alt="Wallet" class="ico-upi" src="<?php echo esc_url(ARP_PLUGIN_URL) ?>/assets/images/cards/ico-wallet.png" />
 										<span><strong>Wallet
-											</strong><?php echo $all_order_data['refunded_tot_wallet_payments']; ?></span>
+											</strong><?php echo esc_html($all_order_data['refunded_tot_wallet_payments']); ?></span>
 									</div>
 
 									<div class="card-label" id="failed-stat-details">
-										<img alt="Credit Card" class="ico-crd" src="<?php echo ARP_PLUGIN_URL ?>/assets/images/cards/ico-card.png" />
+										<img alt="Credit Card" class="ico-crd" src="<?php echo esc_url(ARP_PLUGIN_URL) ?>/assets/images/cards/ico-card.png" />
 										<span><strong>Credit Card </strong>
-											<?php echo $all_order_data['failed_tot_credit_card_payments']; ?>
+											<?php echo esc_html($all_order_data['failed_tot_credit_card_payments']); ?>
 											&nbsp;&nbsp;</span>
-										<img alt="Debit Card" class="ico-crd" src="<?php echo ARP_PLUGIN_URL ?>/assets/images/cards/ico-card.png" />
+										<img alt="Debit Card" class="ico-crd" src="<?php echo esc_url(ARP_PLUGIN_URL) ?>/assets/images/cards/ico-card.png" />
 										<span><strong>Debit Card
-											</strong><?php echo $all_order_data['failed_tot_debit_card_payments']; ?>
+											</strong><?php echo esc_html($all_order_data['failed_tot_debit_card_payments']); ?>
 											&nbsp;&nbsp;</span>
-										<img alt="Net Banking" class="ico-nb" src="<?php echo ARP_PLUGIN_URL ?>/assets/images/cards/ico-ach.png" />
+										<img alt="Net Banking" class="ico-nb" src="<?php echo esc_url(ARP_PLUGIN_URL) ?>/assets/images/cards/ico-ach.png" />
 										<span><strong>Net Banking
-											</strong><?php echo $all_order_data['failed_tot_netbanking_payments']; ?></span>
-										<img alt="UPI" class="ico-upi" src="<?php echo ARP_PLUGIN_URL ?>/assets/images/cards/ico-upi.png" />
+											</strong><?php echo esc_html($all_order_data['failed_tot_netbanking_payments']); ?></span>
+										<img alt="UPI" class="ico-upi" src="<?php echo esc_url(ARP_PLUGIN_URL) ?>/assets/images/cards/ico-upi.png" />
 										<span><strong>UPI
-											</strong><?php echo $all_order_data['failed_tot_upi_payments']; ?></span>
-										<img alt="Wallet" class="ico-upi" src="<?php echo ARP_PLUGIN_URL ?>/assets/images/cards/ico-wallet.png" />
+											</strong><?php echo esc_html($all_order_data['failed_tot_upi_payments']); ?></span>
+										<img alt="Wallet" class="ico-upi" src="<?php echo esc_url(ARP_PLUGIN_URL) ?>/assets/images/cards/ico-wallet.png" />
 										<span><strong>Wallet
-											</strong><?php echo $all_order_data['failed_tot_wallet_payments']; ?></span>
+											</strong><?php echo esc_html($all_order_data['failed_tot_wallet_payments']); ?></span>
 									</div>
 								</div>
 								<div class="grph-cntrl" id="show_main_all">
@@ -221,16 +256,16 @@ $arp_status_color = array(
 						<div class="trans-dtl-tbl-head"><strong>Transaction Details</strong></div>
 						<ul class="subsubsub">
 							<li class="all"><a href="?page=payment-overview&orderby=post_id&order=desc&transaction_status=all&<?php echo $range_filter ?>">All
-									<span class="count">(<?php echo $all_order_data['total_all_records']; ?>)</span></a>
+									<span class="count">(<?php echo esc_html($all_order_data['total_all_records']); ?>)</span></a>
 								|</li>
 							<li><a href="?page=payment-overview&orderby=post_id&order=desc&transaction_status=completed&<?php echo $range_filter ?>">Sales
-									<span class="count">(<?php echo $all_order_data['total_completed_records']; ?>)</span></a>
+									<span class="count">(<?php echo esc_html($all_order_data['total_completed_records']); ?>)</span></a>
 								|</li>
 							<li><a href="?page=payment-overview&orderby=post_id&order=desc&transaction_status=refund&<?php echo $range_filter ?>">Refunded
-									<span class="count">(<?php echo $all_order_data['total_refund_records']; ?>)</span></a>
+									<span class="count">(<?php echo esc_html($all_order_data['total_refund_records']); ?>)</span></a>
 								|</li>
 							<li><a href="?page=payment-overview&orderby=post_id&order=desc&transaction_status=failed&<?php echo $range_filter ?>">Failed
-									<span class="count">(<?php echo $all_order_data['total_failed_records']; ?>)</span></a>
+									<span class="count">(<?php echo esc_html($all_order_data['total_failed_records']); ?>)</span></a>
 							</li>
 						</ul>
 
@@ -254,13 +289,13 @@ $arp_status_color = array(
 								<caption><strong>Sales Report</strong></caption>
 								<thead>
 									<tr>
-										<th scope="col" id="order_number" class="manage-column column-order_number c_order_number column-primary1 sortable <?php echo $all_order_data['link_order']; ?>">
-											<a href="?page=payment-overview&orderby=post_id&order=<?php echo $all_order_data['link_order']; ?>&<?php echo $range_filter ?>">
+										<th scope="col" id="order_number" class="manage-column column-order_number c_order_number column-primary1 sortable <?php echo esc_html($all_order_data['link_order']); ?>">
+											<a href="?page=payment-overview&orderby=post_id&order=<?php echo esc_html($all_order_data['link_order']); ?>&<?php echo $range_filter ?>">
 												<span>Order</span><span class="sorting-indicator"></span>
 											</a>
 										</th>
 										<th scope="col" id="order_date" class="manage-column column-order_number   c_order_date column-primary2 sortable">
-											<a href="?page=payment-overview&order=<?php echo $all_order_data['link_order']; ?>&<?php echo $range_filter ?>">
+											<a href="?page=payment-overview&order=<?php echo esc_html($all_order_data['link_order']); ?>&<?php echo $range_filter ?>">
 												<span>Date & Time (IST)</span>
 											</a>
 										</th>
@@ -316,36 +351,36 @@ $arp_status_color = array(
 
 
 									?>
-											<tr id="post-<?php echo $order_id ?>" class="iedit author-self level-0 post-146 type-shop_order post-password-required hentry">
+											<tr id="post-<?php echo esc_html($order_id) ?>" class="iedit author-self level-0 post-146 type-shop_order post-password-required hentry">
 												<td id="row_order_number" class="order_number column-order_number c_order_number has-row-actions column-primary1">
-													<a href="?page=refund-overview&order_id=<?php echo $order_id ?>"><strong>#<?php echo $order_id ?>
+													<a href="?page=refund-overview&order_id=<?php echo esc_html($order_id) ?>"><strong>#<?php echo esc_html($order_id) ?>
 														</strong></a>
 												</td>
-												<td id="row_order_status" class="order_status column-order_status1 c_order_status hidden" data-colname="Status"><?php echo $order_id ?></td>
+												<td id="row_order_status" class="order_status column-order_status1 c_order_status hidden" data-colname="Status"><?php echo esc_html($order_id) ?></td>
 												<td id="row_order_date" class="order_date column-order_date c_order_date">
-													<?php echo $transaction_date ?></td>
+													<?php echo esc_html($transaction_date) ?></td>
 												<td id="row_order_status" class="order_status column-order_status1 c_order_status" data-colname="Status">
-													<span><mark class="order-status tips" style="background:<?php echo $arp_status_color[$order_status]; ?>"><span><?php echo ucfirst($order_status); ?></span></mark>
+													<span><mark class="order-status tips" style="background:<?php echo esc_html($arp_status_color[$order_status]); ?>"><span><?php echo esc_html(ucfirst($order_status)); ?></span></mark>
 													</span>
 												</td>
 												<td id="row_order_total" class="order_total column-order_status c_order_total">
-													₹<?php echo $order_amount ?></td>
-												<td id="row_refund_amount" class="refund_amount column-order_status c_refund_amount" <?php echo $color_code; ?>><?php echo $refund_amount ?></td>
+													₹<?php echo esc_html($order_amount) ?></td>
+												<td id="row_refund_amount" class="refund_amount column-order_status c_refund_amount" <?php echo esc_html($color_code); ?>><?php echo esc_html($refund_amount) ?></td>
 												<td id="row_order_type" class="order_status column-order_status1 c_order_type">
-													<span><?php echo $type ?></span>
+													<span><?php echo esc_html($type) ?></span>
 												</td>
 												<td id="row_order_payment_id" class="order_payment column-order_status1 c_order_payment_id">
-													<span><?php echo $paymentId; ?></span>
+													<span><?php echo esc_html($paymentId); ?></span>
 												</td>
 												<td id="row_payment_method" class="order_status column-order_status2 c_payment_method" data-colname="Status2">
-													<span><?php echo $payment_method ?></span>
+													<span><?php echo esc_html($payment_method)?></span>
 												</td>
 
 												<td id="row_payment_method" class="order_status column-order_status2 c_card_type" data-colname="Status2">
-													<span><?php echo $card_type ?></span>
+													<span><?php echo esc_html($card_type) ?></span>
 												</td>
 												<td id="row_auth_code" class="order_date column-order_status2 c_auth_code" data-colname="Status2">
-													<span><?php echo $auth_code ?></span>
+													<span><?php echo esc_html($auth_code) ?></span>
 												</td>
 											</tr>
 									<?php

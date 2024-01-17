@@ -154,11 +154,11 @@ if (!function_exists('arp_ajax_order_data')) {
 	{
 		// check if request come from place order or pay order
 		if (isset($_POST['order_action']) && $_POST['order_action'] == 'place_order') {
-			$order_id = $_POST['order_id'];
-			$email = $_POST['email'];
-			$phoneNumber = $_POST['phoneNumber'];
-			$amount = $_POST['amount'];
-			$ap_page_id = $_POST['ap_page_id'];
+			$order_id = sanitize_text_field($_POST['order_id']);
+			$email = sanitize_email($_POST['email']);
+			$phoneNumber = sanitize_text_field($_POST['phoneNumber']);
+			$amount = sanitize_text_field($_POST['amount']);
+			$ap_page_id = sanitize_text_field($_POST['ap_page_id']);
 			$customerData = array(
 				"email" =>  $email,
 				"phone" =>  $phoneNumber
@@ -173,11 +173,11 @@ if (!function_exists('arp_ajax_order_data')) {
 			$response = ARP_Payment_Api::arp_get_payment_link($params);
 
 			if ($response['status_code'] == 400) {
-				echo json_encode(['error_message' => $response['message'], 'status_code' => $response['status_code']]);
+				echo wp_json_encode(['error_message' => $response['message'], 'status_code' => $response['status_code']], JSON_PRETTY_PRINT);
 			} else {
 				update_post_meta($order_id, '_ap_payment_link', $response['paymentLink']);
 				update_post_meta($order_id, '_ap_payment_link_id', $response['id']);
-				echo json_encode(['paymentLink' => $response['paymentLink']]);
+				echo wp_json_encode(['paymentLink' => $response['paymentLink']], JSON_PRETTY_PRINT);
 				die();
 			}
 			exit;
@@ -199,12 +199,12 @@ if (!function_exists('arp_refund_order')) {
 	function arp_refund_order()
 	{
 		if (isset($_POST['refund_action']) && $_POST['refund_action'] == 'refund_order') {
-			$refundAmount = $_POST['refundAmount'];
-			$order_id = $_POST['order_id'];
+			$refundAmount = sanitize_text_field($_POST['refundAmount']);
+			$order_id = sanitize_text_field($_POST['order_id']);
 			if ($_POST['reason'] == '') {
-				$reason = "Refund for order " . $_POST['order_id'];
+				$reason = "Refund for order " . sanitize_text_field($_POST['order_id']);
 			} else {
-				$reason = $_POST['reason'];
+				$reason = sanitize_text_field($_POST['reason']);
 			}
 			$params = array(
 				"UserType" => 1,
@@ -214,7 +214,7 @@ if (!function_exists('arp_refund_order')) {
 
 			$response = ARP_Payment_Api::arp_process_refund($params, $order_id);
 			if ($response !== false) {
-				echo json_encode($response);
+				echo wp_json_encode($response, JSON_PRETTY_PRINT);
 				die();
 			}
 			exit;
@@ -230,14 +230,14 @@ if (!function_exists('arp_refund_order')) {
 if (!function_exists('arp_refund_order_js')) {
 	function arp_refund_order_js()
 	{
-		$ap_order_id = $_GET['order_id'] ?? 0;
+		$ap_order_id = sanitize_text_field($_GET['order_id']) ?? 0;
 ?>
 		<script>
 			function arp_refund_amount() {
 				let message = 'Are you sure you wish to process this refund? This action cannot be undone.';
 				if (confirm(message) == true) {
 					var refund_amount = jQuery('#refund_amount').val();
-					var order_id = '<?php echo $ap_order_id; ?>';
+					var order_id = '<?php echo esc_html($ap_order_id); ?>';
 					var refund_reason = jQuery('#refund_reason').val();
 					if (refund_amount.trim() == '') {
 						jQuery('#refundError').html("Please enter Amount");
@@ -249,7 +249,7 @@ if (!function_exists('arp_refund_order_js')) {
 						jQuery('#refundError').html('');
 						jQuery.ajax({
 							type: 'POST',
-							url: '<?php echo admin_url('admin-ajax.php'); ?>',
+							url: '<?php echo esc_url(admin_url('admin-ajax.php')); ?>',
 							dataType: 'json',
 							data: {
 								'action': 'ajax_refund_order',
@@ -290,7 +290,7 @@ if (!function_exists('arp_order_hook_js')) {
 		$ap_expiry = get_option('ap_expiry');
 	?>
 		<script>
-			var ap_expiry_min = <?php echo $ap_expiry; ?>;
+			var ap_expiry_min = <?php echo esc_html($ap_expiry); ?>;
 			var ap_timeout_in_miliseconds = ap_expiry_min * 60000;
 			var ap_timeout_id;
 			var ap_page_id = 0;
@@ -347,7 +347,7 @@ if (!function_exists('arp_order_hook_js')) {
 				var email = jQuery('#email').val();
 				var amount = jQuery('#amount').val();
 				var delimg =
-					"<img src='<?php echo ARP_PLUGIN_URL; ?>/assets/images/close.png' width='20' height='20' onClick='arp_hide_iframe()' style='cursor:pointer' >";
+					"<img src='<?php echo esc_url(ARP_PLUGIN_URL); ?>/assets/images/close.png' width='20' height='20' onClick='arp_hide_iframe()' style='cursor:pointer' >";
 
 				jQuery('#errMsgPhone').html('');
 				jQuery('#errMsgEmail').html('');
@@ -384,7 +384,7 @@ if (!function_exists('arp_order_hook_js')) {
 					jQuery('#c_step1').css('display', 'block');
 					jQuery.ajax({
 						type: 'POST',
-						url: '<?php echo admin_url('admin-ajax.php'); ?>',
+						url: '<?php echo esc_html(admin_url('admin-ajax.php')); ?>',
 						dataType: 'json',
 						cache: false,
 						data: {

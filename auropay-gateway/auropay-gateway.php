@@ -3,6 +3,7 @@
 /**
  * Plugin Name: Auropay Gateway
  * Plugin URI: https://auropay.net/
+ * Text Domain: auropay-gateway
  * Description: Custom payment gateway powered by AuroPay.
  * Version: 1.0.0
  * Requires at least: 5.6
@@ -19,6 +20,7 @@
 if (!defined('ABSPATH')) {
 	exit;
 }
+
 
 define('AUROPAY_MAIN_FILE', __FILE__);
 define('ARP_PLUGIN_URL', untrailingslashit(plugins_url(basename(plugin_dir_path(__FILE__)), basename(__FILE__))));
@@ -47,7 +49,7 @@ if (is_admin()) {
 		'plugin_action_links_' . plugin_basename(__FILE__),
 		function ($links) {
 			$pluginLinks = array(
-				'<a href="admin.php?page=auropay-settings">' . esc_html__('Settings', 'auropay-settings') . '</a>',
+				'<a href="admin.php?page=auropay-settings">' . esc_html__('Settings', 'auropay-gateway') . '</a>',
 			);
 			return array_merge($pluginLinks, $links);
 		}
@@ -60,6 +62,7 @@ require_once plugin_dir_path(__FILE__) . '/includes/class-auropay-api.php';
 require_once plugin_dir_path(__FILE__) . '/includes/auropay-place-order.php';
 require_once plugin_dir_path(__FILE__) . '/includes/callback-payment-status.php';
 require_once plugin_dir_path(__FILE__) . '/auropay-cron/auropay-sync-order-status.php';
+
 
 add_action('admin_menu', 'arp_register_custom_submenu');
 /**

@@ -1,5 +1,5 @@
 <?php
-
+use Fpdf\Fpdf;
 /**
  * An external standard for Auropay.
  *
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require_once  ARP_PLUGIN_PATH . '/includes/fpdf/fpdf.php';
+require_once ARP_PLUGIN_PATH . '/vendor/autoload.php';
 
 /**
  * Export data in csv and pdf format 
@@ -25,7 +25,7 @@ require_once  ARP_PLUGIN_PATH . '/includes/fpdf/fpdf.php';
  * @link     https://auropay.net/
  */
 if (!class_exists('ARP_PDF')) {
-    class ARP_PDF extends FPDF
+    class ARP_PDF extends Fpdf
     {
         /**
          * Page Header

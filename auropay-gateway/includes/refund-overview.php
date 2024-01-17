@@ -39,14 +39,14 @@ $total_available_to_refund = number_format((float)$total_available_to_refund, 2,
 					<td class="label">Items Subtotal:</td>
 					<td></td>
 					<td class="total">
-						<span>₹<?php echo $order_amount; ?></span>
+						<span>₹<?php echo esc_html($order_amount); ?></span>
 					</td>
 				</tr>
 				<tr>
 					<td class="label">Order Total:</td>
 					<td></td>
 					<td class="total">
-						<span>₹<?php echo $order_amount; ?></span>
+						<span>₹<?php echo esc_html($order_amount); ?></span>
 					</td>
 				</tr>
 			</tbody>
@@ -68,13 +68,13 @@ $total_available_to_refund = number_format((float)$total_available_to_refund, 2,
 						<td class="label">Paid:</td>
 						<td></td>
 						<td class="total">
-							<span>₹<?php echo $order_amount; ?></span>
+							<span>₹<?php echo esc_html($order_amount); ?></span>
 						</td>
 					</tr>
 					<tr>
 						<td colspan="3">
 							<span class="description">
-								<?php echo $order_date; ?> via AuroPay Gateway </span>
+								<?php echo esc_html($order_date); ?> via AuroPay Gateway </span>
 						</td>
 					</tr>
 				</tbody>
@@ -93,13 +93,13 @@ $total_available_to_refund = number_format((float)$total_available_to_refund, 2,
 					<tr>
 						<td class="label refunded-total">Refunded:</td>
 						<td></td>
-						<td class="total refunded-total"><span>-₹<?php echo $refund_amount; ?></span></td>
+						<td class="total refunded-total"><span>-₹<?php echo esc_html($refund_amount); ?></span></td>
 					</tr>
 					<tr>
 						<td class="label label-highlight">Net Payment:</td>
 						<td></td>
 						<td class="total">
-							<span>₹<?php echo $total_available_to_refund; ?></span>
+							<span>₹<?php echo esc_html($total_available_to_refund); ?></span>
 						</td>
 					</tr>
 				</tbody>
@@ -134,11 +134,11 @@ $total_available_to_refund = number_format((float)$total_available_to_refund, 2,
 				<tbody>
 					<tr>
 						<td class="label">Amount already refunded:</td>
-						<td class="total"><span>-₹<?php echo $refund_amount; ?></span></td>
+						<td class="total"><span>-₹<?php echo esc_html($refund_amount); ?></span></td>
 					</tr>
 					<tr>
 						<td class="label">Total available to refund:</td>
-						<td class="total"><span>₹<?php echo $total_available_to_refund; ?></span></td>
+						<td class="total"><span>₹<?php echo esc_html($total_available_to_refund); ?></span></td>
 					</tr>
 					<tr>
 						<td class="label">
@@ -147,7 +147,7 @@ $total_available_to_refund = number_format((float)$total_available_to_refund, 2,
 							</label>
 						</td>
 						<td class="total">
-							<input type="number" id="refund_amount" name="refund_amount" value="<?php echo $total_available_to_refund; ?>">
+							<input type="number" id="refund_amount" name="refund_amount" value="<?php echo esc_html($total_available_to_refund); ?>">
 							<span id="refundError" class="errorMsg"></span>
 						</td>
 					</tr>
@@ -164,7 +164,7 @@ $total_available_to_refund = number_format((float)$total_available_to_refund, 2,
 			</table>
 			<hr>
 			<div class="refund-actions">
-				<button type="button" class="button button-primary do-api-refund" id="btnRefundAmount" onclick="arp_refund_amount()">Refund ₹ <?php echo $total_available_to_refund; ?> via AuroPay
+				<button type="button" class="button button-primary do-api-refund" id="btnRefundAmount" onclick="arp_refund_amount()">Refund ₹ <?php echo esc_html($total_available_to_refund); ?> via AuroPay
 					Gateway</button>
 				<button type="button" class="button cancel-action" onclick="arp_cancel_btn()">Cancel</button>
 			</div>

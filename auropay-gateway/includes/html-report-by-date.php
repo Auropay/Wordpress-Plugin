@@ -134,7 +134,7 @@ $chart_data = wp_json_encode(
 			if (highlight == 'sale') {
 				if (type == 'bar') {
 					var series = [{
-						label: "<?php echo esc_js(__(ARP_GROSS_SALES_AMOUNT, 'woocommerce')); ?>",
+						label: "<?php echo esc_js(__(ARP_GROSS_SALES_AMOUNT, 'auropay-gateway')); ?>",
 						data: order_data.sale_amount,
 						yaxis: 1,
 						color: '<?php echo esc_js($chart_colours['sales_amount']); ?>',
@@ -175,7 +175,7 @@ $chart_data = wp_json_encode(
 			} else if (highlight == 'refunded') {
 				if (type == 'bar') {
 					var series = [{
-						label: "<?php echo esc_js(__(ARP_REFUND_AMOUNT, 'woocommerce')); ?>",
+						label: "<?php echo esc_js(__(ARP_REFUND_AMOUNT, 'auropay-gateway')); ?>",
 						data: order_data.refund_amount,
 						yaxis: 1,
 						color: '<?php echo esc_js($chart_colours['refund_amount']); ?>',
@@ -190,11 +190,11 @@ $chart_data = wp_json_encode(
 						shadowSize: 0,
 						enable_tooltip: true,
 						stack: true,
-						append_tooltip: "<?php echo esc_html(' ' . __('Refunds', 'woocommerce')); ?>",
+						append_tooltip: "<?php echo esc_html(' ' . __('Refunds', 'auropay-gateway')); ?>",
 					}];
 				} else {
 					var series = [{
-						label: "<?php echo esc_js(__(ARP_REFUND_AMOUNT, 'woocommerce')); ?>",
+						label: "<?php echo esc_js(__(ARP_REFUND_AMOUNT, 'auropay-gateway')); ?>",
 						data: order_data.refund_amount,
 						yaxis: 1,
 						color: '<?php echo esc_js($chart_colours['refund_amount']); ?>',
@@ -212,14 +212,14 @@ $chart_data = wp_json_encode(
 						},
 						shadowSize: 0,
 						enable_tooltip: true,
-						append_tooltip: "<?php echo esc_html(' ' . __('Refunds', 'woocommerce')); ?>",
+						append_tooltip: "<?php echo esc_html(' ' . __('Refunds', 'auropay-gateway')); ?>",
 					}];
 				}
 
 			} else if (highlight == 'failed') {
 				if (type == 'bar') {
 					var series = [{
-						label: "<?php echo esc_js(__(ARP_FAILED_AMOUNT, 'woocommerce')); ?>",
+						label: "<?php echo esc_js(__(ARP_FAILED_AMOUNT, 'auropay-gateway')); ?>",
 						data: order_data.failed_amount,
 						yaxis: 1,
 						color: '<?php echo esc_js($chart_colours['failed_amount']); ?>',
@@ -234,11 +234,11 @@ $chart_data = wp_json_encode(
 						stack: true,
 						shadowSize: 0,
 						enable_tooltip: true,
-						append_tooltip: "<?php echo esc_html(' ' . __('Failed', 'woocommerce')); ?>",
+						append_tooltip: "<?php echo esc_html(' ' . __('Failed', 'auropay-gateway')); ?>",
 					}];
 				} else {
 					var series = [{
-						label: "<?php echo esc_js(__(ARP_FAILED_AMOUNT, 'woocommerce')); ?>",
+						label: "<?php echo esc_js(__(ARP_FAILED_AMOUNT, 'auropay-gateway')); ?>",
 						data: order_data.failed_amount,
 						yaxis: 1,
 						color: '<?php echo esc_js($chart_colours['failed_amount']); ?>',
@@ -256,14 +256,14 @@ $chart_data = wp_json_encode(
 						},
 						shadowSize: 0,
 						enable_tooltip: true,
-						append_tooltip: "<?php echo esc_html(' ' . __('Failed', 'woocommerce')); ?>",
+						append_tooltip: "<?php echo esc_html(' ' . __('Failed', 'auropay-gateway')); ?>",
 					}];
 				}
 
 			} else {
 				if (type == 'bar') {
 					var series = [{
-							label: "<?php echo esc_js(__(ARP_GROSS_SALES_AMOUNT, 'woocommerce')); ?>",
+							label: "<?php echo esc_js(__(ARP_GROSS_SALES_AMOUNT, 'auropay-gateway')); ?>",
 							data: order_data.sale_amount,
 							yaxis: 1,
 							color: '<?php echo esc_js($chart_colours['sales_amount']); ?>',
@@ -278,11 +278,11 @@ $chart_data = wp_json_encode(
 							shadowSize: 0,
 							stack: true,
 							enable_tooltip: true,
-							append_tooltip: "<?php echo esc_html(' ' . __('Sales', 'woocommerce')); ?>",
+							append_tooltip: "<?php echo esc_html(' ' . __('Sales', 'auropay-gateway')); ?>",
 
 						},
 						{
-							label: "<?php echo esc_js(__(ARP_REFUND_AMOUNT, 'woocommerce')); ?>",
+							label: "<?php echo esc_js(__(ARP_REFUND_AMOUNT, 'auropay-gateway')); ?>",
 							data: order_data.refund_amount,
 							yaxis: 1,
 							color: '<?php echo esc_js($chart_colours['refund_amount']); ?>',
@@ -297,10 +297,10 @@ $chart_data = wp_json_encode(
 							shadowSize: 0,
 							stack: true,
 							enable_tooltip: true,
-							append_tooltip: "<?php echo esc_html(' ' . __('Refunds', 'woocommerce')); ?>",
+							append_tooltip: "<?php echo esc_html(' ' . __('Refunds', 'auropay-gateway')); ?>",
 						},
 						{
-							label: "<?php echo esc_js(__(ARP_FAILED_AMOUNT, 'woocommerce')); ?>",
+							label: "<?php echo esc_js(__(ARP_FAILED_AMOUNT, 'auropay-gateway')); ?>",
 							data: order_data.failed_amount,
 							yaxis: 1,
 							color: '<?php echo esc_js($chart_colours['failed_amount']); ?>',
@@ -315,13 +315,13 @@ $chart_data = wp_json_encode(
 							stack: true,
 							shadowSize: 0,
 							enable_tooltip: true,
-							append_tooltip: "<?php echo esc_html(' ' . __('Failed', 'woocommerce')); ?>",
+							append_tooltip: "<?php echo esc_html(' ' . __('Failed', 'auropay-gateway')); ?>",
 						},
 					];
 
 				} else {
 					var series = [{
-							label: "<?php echo esc_js(__(ARP_GROSS_SALES_AMOUNT, 'woocommerce')); ?>",
+							label: "<?php echo esc_js(__(ARP_GROSS_SALES_AMOUNT, 'auropay-gateway')); ?>",
 							data: order_data.sale_amount,
 							yaxis: 1,
 							color: '<?php echo esc_js($chart_colours['sales_amount']); ?>',
@@ -339,11 +339,11 @@ $chart_data = wp_json_encode(
 							},
 							shadowSize: 0,
 							enable_tooltip: true,
-							append_tooltip: "<?php echo esc_html(' ' . __('Sales', 'woocommerce')); ?>",
+							append_tooltip: "<?php echo esc_html(' ' . __('Sales', 'auropay-gateway')); ?>",
 
 						},
 						{
-							label: "<?php echo esc_js(__(ARP_REFUND_AMOUNT, 'woocommerce')); ?>",
+							label: "<?php echo esc_js(__(ARP_REFUND_AMOUNT, 'auropay-gateway')); ?>",
 							data: order_data.refund_amount,
 							yaxis: 1,
 							color: '<?php echo esc_js($chart_colours['refund_amount']); ?>',
@@ -361,10 +361,10 @@ $chart_data = wp_json_encode(
 							},
 							shadowSize: 0,
 							enable_tooltip: true,
-							append_tooltip: "<?php echo esc_html(' ' . __('Refunds', 'woocommerce')); ?>",
+							append_tooltip: "<?php echo esc_html(' ' . __('Refunds', 'auropay-gateway')); ?>",
 						},
 						{
-							label: "<?php echo esc_js(__(ARP_FAILED_AMOUNT, 'woocommerce')); ?>",
+							label: "<?php echo esc_js(__(ARP_FAILED_AMOUNT, 'auropay-gateway')); ?>",
 							data: order_data.failed_amount,
 							yaxis: 1,
 							color: '<?php echo esc_js($chart_colours['failed_amount']); ?>',
@@ -382,7 +382,7 @@ $chart_data = wp_json_encode(
 							},
 							shadowSize: 0,
 							enable_tooltip: true,
-							append_tooltip: "<?php echo esc_html(' ' . __('Failed', 'woocommerce')); ?>",
+							append_tooltip: "<?php echo esc_html(' ' . __('Failed', 'auropay-gateway')); ?>",
 						},
 					];
 				}

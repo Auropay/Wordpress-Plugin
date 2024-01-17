@@ -218,7 +218,7 @@ if (!function_exists('arp_get_order_data')) {
         $limit = 10; // Number of rows in page
 
         if (isset($_GET['order'])) {
-            $order = $_GET['order'];
+            $order = sanitize_text_field($_GET['order']);
         } else {
             $order = "desc";
         }
@@ -230,13 +230,13 @@ if (!function_exists('arp_get_order_data')) {
         }
 
         if (isset($_GET['orderby'])) {
-            $order_by = $_GET['orderby'];
+            $order_by = sanitize_text_field($_GET['orderby']);
         } else {
             $order_by = "post_id";
         }
 
         if (isset($_GET['range'])) {
-            $range = $_GET['range'];
+            $range = sanitize_text_field($_GET['range']);
         } else {
             $range = "7day";
         }
@@ -285,7 +285,7 @@ if (!function_exists('arp_get_order_data')) {
             $sale_amount = number_format((float)$sale_amount, 2, '.', '');
             if (strtotime($transaction_date) >= $dates['start_date'] && strtotime($transaction_date) < $dates['end_date']) {
                 $total_all_records++;
-                $transaction_status = isset($_GET['transaction_status']) ? $_GET['transaction_status'] : '';
+                $transaction_status = isset($_GET['transaction_status']) ? sanitize_text_field($_GET['transaction_status']) : '';
 
                 if ($order_status == 'Authorized') {
                     if ($transaction_status == 'completed') {
@@ -534,7 +534,7 @@ if (!function_exists('arp_csv_pdf_export')) {
         $transaction_data = arp_get_order_data();
 
         if ($transaction_data['order_csv_data']) {
-            arp_export_data($_POST["export_type"], $transaction_data['order_csv_data']);
+            arp_export_data(sanitize_text_field($_POST["export_type"]), $transaction_data['order_csv_data']);
         }
     }
 }

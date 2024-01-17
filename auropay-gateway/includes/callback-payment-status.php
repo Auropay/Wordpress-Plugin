@@ -18,9 +18,9 @@ global $wp;
 if (isset($_REQUEST['refNo']) && isset($_REQUEST['page_id']) && isset($_REQUEST['id'])) {
     $order_id = 0;
     $transaction_id = 0;
-    $order_id = $_REQUEST['refNo'];
-    $transaction_id = $_REQUEST['id'];
-    $page_id = $_REQUEST['page_id'];
+    $order_id = sanitize_text_field($_REQUEST['refNo']);
+    $transaction_id = sanitize_text_field($_REQUEST['id']);
+    $page_id = sanitize_text_field($_REQUEST['page_id']);
     $redirect_url = home_url('/') . '?page_id=' . $page_id;
     $status = ARP_Payment_Api::arp_get_payment_status($transaction_id, $order_id);
 
