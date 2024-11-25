@@ -22,23 +22,23 @@ if (isset($_REQUEST['refNo']) && isset($_REQUEST['page_id']) && isset($_REQUEST[
     $transaction_id = sanitize_text_field($_REQUEST['id']);
     $page_id = sanitize_text_field($_REQUEST['page_id']);
     $redirect_url = home_url('/') . '?page_id=' . $page_id;
-    $status = ARP_Payment_Api::arp_get_payment_status($transaction_id, $order_id);
+    $status = AUROPAY_Payment_Api::auropay_get_payment_status($transaction_id, $order_id);
 
     if ($status == "Authorized") {
-        update_post_meta($order_id, ARP_ORDER_STATUS, $status);
+        update_post_meta($order_id, AUROPAY_ORDER_STATUS, $status);
         echo '<script>alert("Payment was successfully processed by Auropay Payments")</script>';
     } else {
         if ('Fail' != $status) {
-            update_post_meta($order_id, ARP_ORDER_STATUS, $status);
+            update_post_meta($order_id, AUROPAY_ORDER_STATUS, $status);
             echo '<script>alert("Payment failed")</script>';
         } else {
-            update_post_meta($order_id, ARP_ORDER_STATUS, 'Failed');
+            update_post_meta($order_id, AUROPAY_ORDER_STATUS, 'Failed');
             echo '<script>alert("Payment failed")</script>';
         }
     }
 
     echo '<script>'
-        . "parent.location.href = '" . $redirect_url . "'"
+        . "parent.location.href = '" . esc_url_raw($redirect_url) . "'"
         . '</script>';
     exit;
 }

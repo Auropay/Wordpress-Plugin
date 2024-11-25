@@ -3,7 +3,7 @@ Contributors: wordpress
 Tags: wordpress, auropay, payment, gateway
 Requires at least: 5.6
 Tested up to: 5.6
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 Requires PHP: 7.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -11,8 +11,7 @@ License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Allows you to easily built payment buttons on your WordPress website and Accept Credit/Debit card  payments also issue refunds.
 == Description ==
 
-This is the official "Auropay Gateway" plugin for Auropay merchants. This allows
-you to do the following:
+This is the official "Auropay Gateway" plugin for Auropay merchants. This allows you to do the following:
 
 1. Write [AURP] wherever you want on the post and the button to show up.
 2. Specify the amount, phone and email details on checkout page.
@@ -40,6 +39,16 @@ Yes, it does - production and Test (sandbox) mode is driven by the API keys you 
 2. Offer a range of payment methods such as local and alternative payment methods ex. wallet, credit card, debit card, upi and netbanking etc.
 
 == Changelog ==
+== Changelog ==
+
+= 1.0.1 =
+* Fixed some code standard issues
+
+== Upgrade Notice ==
+
+= 1.0.1 =
+* switch from 1.0.0 to 1.0.1 Fixed some code standard issues
+
 
 == License ==
 

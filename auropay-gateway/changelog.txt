@@ -1,5 +1,8 @@
 *** Changelog ***
 
+= 2024-11-19 - version 1.0.1
+* Fixed some code standard issues
+
 = 2022-10-01 - version 1.0.0
 * First Release
 

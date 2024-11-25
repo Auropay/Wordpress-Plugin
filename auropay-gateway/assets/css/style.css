@@ -814,7 +814,7 @@ span.bank-logo {
   background-position-x: -3400px;
 }
 
-.order-status{
+.order-status {
   padding: 0 10px;
   display: inline-flex;
   line-height: 2.5em;
@@ -835,4 +835,8 @@ span.bank-logo {
   border: none;
   overflow: hidden;
   margin: 10px;
+}
+
+.submitBtn {
+  margin-top: 15px;
 }
