@@ -85,8 +85,6 @@ if ( !function_exists( 'auropay_payment_link_params' ) ) {
 		$amount = number_format( $amount, 2, '.', '' );
 
 		update_post_meta( $order_id, '_payment_method', 'auropay_gateway' );
-		update_post_meta( $order_id, '_auropay_accesskey', AUROPAY_ACCESSKEY );
-		update_post_meta( $order_id, '_auropay_securetoken', AUROPAY_SECRETKEY );
 		update_post_meta( $order_id, '_auropay_transaction_reference_number', $refNo );
 
 		return array(
@@ -94,7 +92,6 @@ if ( !function_exists( 'auropay_payment_link_params' ) ) {
 			"title" => $title,
 			"shortDescription" => "",
 			"paymentDescription" => "",
-			"invoiceNumber" => $order_id,
 			"enablePartialPayment" => false,
 			"enableMultiplePayment" => false,
 			"enableProtection" => false,
@@ -106,8 +103,6 @@ if ( !function_exists( 'auropay_payment_link_params' ) ) {
 			"source" => 'ecommerce',
 			"platform" => 'wordpress',
 			"callbackParameters" => array(
-				"AccessKey" => AUROPAY_ACCESSKEY,
-				"SecretKey" => AUROPAY_SECRETKEY,
 				"ReferenceNo" => $refNo,
 				"ReferenceType" => "AuropayOrder",
 				"TransactionId" => "",
@@ -336,6 +331,7 @@ function auropay_contact_form() {
 	var reg = /^[\w]{1,}[\w.+\-]{0,}@[\w\-]{2,}(\.[\w\-]{2,})?\.[a-zA-Z]{2,4}$/;
 	var phone_number_regex = /^[0-9-+]+$/;
 	var amount_regex = /^(?!0$)([1-9]\d*)(\.\d{1,2})?$/;
+	var name_regex = /^[a-zA-Z\s]{1,70}$/;
 	var firstName = jQuery('#firstname').val();
 	var lastName = jQuery('#lastname').val();
 	var phoneNumber = jQuery('#phone').val();
@@ -353,15 +349,23 @@ function auropay_contact_form() {
 		jQuery('#errMsgFirstname').html('Please enter firstname.');
 		jQuery('#firstname').focus();
 		return false;
+	}else if (firstName.trim() != '' && !name_regex.test(firstName)) {
+		jQuery('#errMsgFirstname').html('Please enter valid firstname.');
+		jQuery('#firstname').focus();
+		return false;
 	} else if (lastName.trim() == '') {
 		jQuery('#errMsgLastname').html('Please enter lastname.');
 		jQuery('#lastname').focus();
 		return false;
-	} else if (phoneNumber.trim() == '') {
+	}else if (lastName.trim() != '' && !name_regex.test(lastName)) {
+		jQuery('#errMsgLastname').html('Please enter valid firstname.');
+		jQuery('#lastname').focus();
+		return false;
+	}else if (phoneNumber.trim() == '') {
 		jQuery('#errMsgPhone').html('Please enter your phone number.');
 		jQuery('#phone').focus();
 		return false;
-	} else if (phoneNumber.trim() != '' && !phone_number_regex.test(phoneNumber)) {
+	}else if (phoneNumber.trim() != '' && !phone_number_regex.test(phoneNumber)) {
 		jQuery('#errMsgPhone').html('Please enter valid phone number.');
 		jQuery('#phone').focus();
 		return false;

@@ -5,13 +5,13 @@
  * Plugin URI: https://auropay.net/
  * Text Domain: auropay-gateway
  * Description: Custom payment gateway powered by AuroPay.
- * Version: 1.0.1
+ * Version: 1.0.3
  * Requires at least: 5.6
  * Requires PHP: 7.4
  * Author: Akshita Minocha
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
- * Tested up to: 5.6
+ * Tested up to: 5.6 < 6.7
  *
  * @package  Auropay_Gateway
  * @link     https://auropay.net/

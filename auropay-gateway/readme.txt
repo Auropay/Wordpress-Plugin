@@ -2,8 +2,8 @@
 Contributors: wordpress
 Tags: wordpress, auropay, payment, gateway
 Requires at least: 5.6
-Tested up to: 5.6
-Stable tag: 1.0.1
+Tested up to: 5.6 < 6.7
+Stable tag: 1.0.3
 Requires PHP: 7.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -39,19 +39,24 @@ Yes, it does - production and Test (sandbox) mode is driven by the API keys you 
 2. Offer a range of payment methods such as local and alternative payment methods ex. wallet, credit card, debit card, upi and netbanking etc.
 
 == Changelog ==
-== Changelog ==
 
 = 1.0.1 =
 * Fixed some code standard issues
 
+= 1.0.2 =
+* switch from 1.0.1 to 1.0.2 Removed the accessKey and secretKey from payment link request
+
+= 1.0.3 =
+* switch from 1.0.2 to 1.0.3 Added the validation for firstname and lastname
+
 == Upgrade Notice ==
 
-= 1.0.1 =
-* switch from 1.0.0 to 1.0.1 Fixed some code standard issues
+= 1.0.3 =
+* switch from 1.0.2 to 1.0.3 Added the validation for firstname and lastname
+
 
 
 == License ==
 
 The Auropay plugin is released under the GPLv3 license, same as that
 of WordPress. See the LICENSE file for the complete LICENSE text.
-

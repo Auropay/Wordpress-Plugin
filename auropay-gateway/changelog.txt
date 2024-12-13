@@ -1,5 +1,11 @@
 *** Changelog ***
 
+= 2024-12-13 - version 1.0.3
+* Added the validation for firstname and lastname
+
+= 2024-12-10 - version 1.0.2
+* Removed the accessKey and secretKey from payment link request
+
 = 2024-11-19 - version 1.0.1
 * Fixed some code standard issues
 
