@@ -15,18 +15,17 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 global $wp_locale;
-
 // Sanitize the array values
 $sanitizedMonthAbbrev = array_map( 'esc_html', array_values( $wp_locale->month_abbrev ) );
 
 // Encode the sanitized array into JSON
 $jsonMonthAbbrev = wp_json_encode( $sanitizedMonthAbbrev );
 
-$chart_groupby = $all_order_data['chart_groupby'];
-$barwidth = $all_order_data['barwidth'];
-$start_date = $all_order_data['start_date'];
-$interval = $all_order_data['interval'];
-$allChartData = $all_order_data['chart_datas'];
+$chart_groupby = $auropay_all_order_data['chart_groupby'];
+$barwidth = $auropay_all_order_data['barwidth'];
+$start_date = $auropay_all_order_data['start_date'];
+$interval = $auropay_all_order_data['interval'];
+$allChartData = $auropay_all_order_data['chart_datas'];
 
 //configure color of chart
 $chart_colours = array(
@@ -150,464 +149,34 @@ $chart_data = wp_json_encode(
 
 ?>
 
-<script>
-var main_chart;
-jQuery(function() {
-	var order_data = JSON.parse(decodeURIComponent('<?php echo rawurlencode( $chart_data ); ?>'));
-
-	console.log(order_data)
-	var drawGraph = function(highlight, type = 'line') {
-		type = jQuery('#chart_type').val();
-		if (highlight == 'sale') {
-			if (type == 'bar') {
-				var series = [{
-					label: "<?php echo esc_js( __( 'Gross sales amount', 'auropay-gateway' ) ); ?>",
-					data: order_data.sale_amount,
-					yaxis: 1,
-					color: '<?php echo esc_js( $chart_colours['sales_amount'] ); ?>',
-					bars: {
-						fillColor: '<?php echo esc_html( $chart_colours['sales_amount'] ); ?>',
-						fill: true,
-						show: true,
-						lineWidth: 0,
-						barWidth: <?php echo esc_html( $barwidth ); ?> * 0.5,
-						align: 'center'
-					},
-					shadowSize: 0,
-					enable_tooltip: true,
-					stack: true
-				}];
-			} else {
-				var series = [{
-					label: "Gross sales amount",
-					data: order_data.sale_amount,
-					yaxis: 1,
-					color: '<?php echo esc_js( $chart_colours['sales_amount'] ); ?>',
-					points: {
-						show: true,
-						radius: 5,
-						lineWidth: 2,
-						fillColor: '#fff',
-						fill: true
-					},
-					lines: {
-						show: true,
-						lineWidth: 2,
-						fill: false
-					},
-					shadowSize: 0,
-					enable_tooltip: true
-				}];
-			}
-		} else if (highlight == 'refunded') {
-			if (type == 'bar') {
-				var series = [{
-					label: "<?php echo esc_js( __( 'Refund amount', 'auropay-gateway' ) ); ?>",
-					data: order_data.refund_amount,
-					yaxis: 1,
-					color: '<?php echo esc_js( $chart_colours['refund_amount'] ); ?>',
-					bars: {
-						fillColor: '<?php echo esc_html( $chart_colours['refund_amount'] ); ?>',
-						fill: true,
-						show: true,
-						lineWidth: 0,
-						barWidth: <?php echo esc_html( $barwidth ); ?> * 0.5,
-						align: 'center'
-					},
-					shadowSize: 0,
-					enable_tooltip: true,
-					stack: true,
-					append_tooltip: "<?php echo esc_html( ' ' . __( 'Refunds', 'auropay-gateway' ) ); ?>",
-				}];
-			} else {
-				var series = [{
-					label: "<?php echo esc_js( __( 'Refund amount', 'auropay-gateway' ) ); ?>",
-					data: order_data.refund_amount,
-					yaxis: 1,
-					color: '<?php echo esc_js( $chart_colours['refund_amount'] ); ?>',
-					points: {
-						show: true,
-						radius: 5,
-						lineWidth: 2,
-						fillColor: '#fff',
-						fill: true
-					},
-					lines: {
-						show: true,
-						lineWidth: 2,
-						fill: false
-					},
-					shadowSize: 0,
-					enable_tooltip: true,
-					append_tooltip: "<?php echo esc_html( ' ' . __( 'Refunds', 'auropay-gateway' ) ); ?>",
-				}];
-			}
-
-		} else if (highlight == 'failed') {
-			if (type == 'bar') {
-				var series = [{
-					label: "<?php echo esc_js( __( 'Failed amount', 'auropay-gateway' ) ); ?>",
-					data: order_data.failed_amount,
-					yaxis: 1,
-					color: '<?php echo esc_js( $chart_colours['failed_amount'] ); ?>',
-					bars: {
-						fillColor: '<?php echo esc_html( $chart_colours['failed_amount'] ); ?>',
-						fill: true,
-						show: true,
-						lineWidth: 0,
-						barWidth: <?php echo esc_html( $barwidth ); ?> * 0.5,
-						align: 'center'
-					},
-					stack: true,
-					shadowSize: 0,
-					enable_tooltip: true,
-					append_tooltip: "<?php echo esc_html( ' ' . __( 'Failed', 'auropay-gateway' ) ); ?>",
-				}];
-			} else {
-				var series = [{
-					label: "<?php echo esc_js( __( 'Failed amount', 'auropay-gateway' ) ); ?>",
-					data: order_data.failed_amount,
-					yaxis: 1,
-					color: '<?php echo esc_js( $chart_colours['failed_amount'] ); ?>',
-					points: {
-						show: true,
-						radius: 5,
-						lineWidth: 2,
-						fillColor: '#fff',
-						fill: true
-					},
-					lines: {
-						show: true,
-						lineWidth: 2,
-						fill: false
-					},
-					shadowSize: 0,
-					enable_tooltip: true,
-					append_tooltip: "<?php echo esc_html( ' ' . __( 'Failed', 'auropay-gateway' ) ); ?>",
-				}];
-			}
-
-		} else {
-			if (type == 'bar') {
-				var series = [{
-						label: "<?php echo esc_js( __( 'Gross sales amount', 'auropay-gateway' ) ); ?>",
-						data: order_data.sale_amount,
-						yaxis: 1,
-						color: '<?php echo esc_js( $chart_colours['sales_amount'] ); ?>',
-						bars: {
-							fillColor: '<?php echo esc_html( $chart_colours['sales_amount'] ); ?>',
-							fill: true,
-							show: true,
-							lineWidth: 0,
-							barWidth: <?php echo esc_html( $barwidth ); ?> * 0.5,
-							align: 'center'
-						},
-						shadowSize: 0,
-						stack: true,
-						enable_tooltip: true,
-						append_tooltip: "<?php echo esc_html( ' ' . __( 'Sales', 'auropay-gateway' ) ); ?>",
-
-					},
-					{
-						label: "<?php echo esc_js( __( 'Refund amount', 'auropay-gateway' ) ); ?>",
-						data: order_data.refund_amount,
-						yaxis: 1,
-						color: '<?php echo esc_js( $chart_colours['refund_amount'] ); ?>',
-						bars: {
-							fillColor: '<?php echo esc_html( $chart_colours['refund_amount'] ); ?>',
-							fill: true,
-							show: true,
-							lineWidth: 0,
-							barWidth: <?php echo esc_html( $barwidth ); ?> * 0.5,
-							align: 'center'
-						},
-						shadowSize: 0,
-						stack: true,
-						enable_tooltip: true,
-						append_tooltip: "<?php echo esc_html( ' ' . __( 'Refunds', 'auropay-gateway' ) ); ?>",
-					},
-					{
-						label: "<?php echo esc_js( __( 'Failed amount', 'auropay-gateway' ) ); ?>",
-						data: order_data.failed_amount,
-						yaxis: 1,
-						color: '<?php echo esc_js( $chart_colours['failed_amount'] ); ?>',
-						bars: {
-							fillColor: '<?php echo esc_html( $chart_colours['failed_amount'] ); ?>',
-							fill: true,
-							show: true,
-							lineWidth: 0,
-							barWidth: <?php echo esc_html( $barwidth ); ?> * 0.5,
-							align: 'center'
-						},
-						stack: true,
-						shadowSize: 0,
-						enable_tooltip: true,
-						append_tooltip: "<?php echo esc_html( ' ' . __( 'Failed', 'auropay-gateway' ) ); ?>",
-					},
-				];
-
-			} else {
-				var series = [{
-						label: "<?php echo esc_js( __( 'Gross sales amount', 'auropay-gateway' ) ); ?>",
-						data: order_data.sale_amount,
-						yaxis: 1,
-						color: '<?php echo esc_js( $chart_colours['sales_amount'] ); ?>',
-						points: {
-							show: true,
-							radius: 5,
-							lineWidth: 2,
-							fillColor: '#fff',
-							fill: true
-						},
-						lines: {
-							show: true,
-							lineWidth: 2,
-							fill: false
-						},
-						shadowSize: 0,
-						enable_tooltip: true,
-						append_tooltip: "<?php echo esc_html( ' ' . __( 'Sales', 'auropay-gateway' ) ); ?>",
-
-					},
-					{
-						label: "<?php echo esc_js( __( 'Refund amount', 'auropay-gateway' ) ); ?>",
-						data: order_data.refund_amount,
-						yaxis: 1,
-						color: '<?php echo esc_js( $chart_colours['refund_amount'] ); ?>',
-						points: {
-							show: true,
-							radius: 5,
-							lineWidth: 2,
-							fillColor: '#fff',
-							fill: true
-						},
-						lines: {
-							show: true,
-							lineWidth: 2,
-							fill: false
-						},
-						shadowSize: 0,
-						enable_tooltip: true,
-						append_tooltip: "<?php echo esc_html( ' ' . __( 'Refunds', 'auropay-gateway' ) ); ?>",
-					},
-					{
-						label: "<?php echo esc_js( __( 'Failed amount', 'auropay-gateway' ) ); ?>",
-						data: order_data.failed_amount,
-						yaxis: 1,
-						color: '<?php echo esc_js( $chart_colours['failed_amount'] ); ?>',
-						points: {
-							show: true,
-							radius: 5,
-							lineWidth: 2,
-							fillColor: '#fff',
-							fill: true
-						},
-						lines: {
-							show: true,
-							lineWidth: 2,
-							fill: false
-						},
-						shadowSize: 0,
-						enable_tooltip: true,
-						append_tooltip: "<?php echo esc_html( ' ' . __( 'Failed', 'auropay-gateway' ) ); ?>",
-					},
-				];
-			}
-		}
-
-		if (highlight !== 'undefined' && series[highlight]) {
-			highlight_series = series[highlight];
-
-			highlight_series.color = '#9c5d90';
-
-			if (highlight_series.bars) {
-				highlight_series.bars.fillColor = '#9c5d90';
-			}
-
-			if (highlight_series.lines) {
-				highlight_series.lines.lineWidth = 5;
-			}
-		}
-
-		main_chart = jQuery.plot(
-			jQuery('.chart-placeholder.main'),
-			series, {
-				legend: {
-					show: false
-				},
-				grid: {
-					color: '#aaa',
-					borderColor: 'transparent',
-					borderWidth: 0,
-					hoverable: true
-				},
-				xaxes: [{
-					color: '#aaa',
-					position: "bottom",
-					tickColor: 'transparent',
-					mode: "time",
-					timeformat: "<?php echo ( 'day' === $chart_groupby ) ? '%d %b' : '%b'; ?>",
-					monthNames: JSON.parse(decodeURIComponent(
-						'<?php echo rawurlencode( $jsonMonthAbbrev ); ?>'
-					)),
-					tickLength: 1,
-					minTickSize: [1, "<?php echo esc_js( $chart_groupby ); ?>"],
-					font: {
-						color: "#aaa"
-					}
-				}],
-				yaxes: [{
-						min: 0,
-						minTickSize: 1,
-						tickDecimals: 2,
-						color: '#d4d9dc',
-						font: {
-							color: "#aaa"
-						},
-						tickFormatter: function(v, axis) {
-							return "₹" + v.toFixed(axis.tickDecimals)
-						}
-					},
-					{
-						position: "right",
-						min: 0,
-						tickDecimals: 2,
-						alignTicksWithAxis: 1,
-						color: 'transparent',
-						font: {
-							color: "#aaa"
-						}
-					}
-				],
-			}
-		);
-		jQuery('.chart-placeholder').resize();
-	}
-
-	drawGraph('sale');
-	jQuery('.highlight_series').hover(
-		function() {
-			drawGraph(jQuery(this).data('series'));
-		},
-		function() {
-			drawGraph();
-		}
+<?php
+function auropay_enqueue_report( $current_range, $chart_colours, $barwidth, $chart_groupby, $chart_data, $jsonMonthAbbrev ) {
+	// Register the JavaScript file
+	wp_enqueue_script(
+		'report-by-date-js',
+		AUROPAY_PLUGIN_URL . '/assets/js/time-report-by-date.js',
+		array( 'jquery', 'jquery-ui-datepicker' ),
+		null,
+		true
 	);
 
-	jQuery('#sale_box').hover(
-		function() {
-			jQuery(this).css('cursor', 'pointer');
-			jQuery(this).css('background-color', '#f0f0f1');
-			jQuery('#refunded_box').css('background-color', '#fff');
-			jQuery('#failed_box').css('background-color', '#fff');
-		}
-	);
-	jQuery('#refunded_box').hover(
-		function() {
-			jQuery(this).css('cursor', 'pointer');
-			jQuery(this).css('background-color', '#f0f0f1');
-			jQuery('#failed_box').css('background-color', '#fff');
-			jQuery('#sale_box').css('background-color', '#fff');
-		}
-	);
-	jQuery('#failed_box').hover(
-		function() {
-			jQuery(this).css('cursor', 'pointer');
-			jQuery(this).css('background-color', '#f0f0f1');
-			jQuery('#refunded_box').css('background-color', '#fff');
-			jQuery('#sale_box').css('background-color', '#fff');
-		}
-	);
+	// Pass dynamic data from PHP to JavaScript (current_range)
+	wp_localize_script( 'report-by-date-js', 'report_vars', array(
+		'current_range' => $current_range,
+		'chart_colours' => $chart_colours,
+		'barwidth' => $barwidth,
+		'chart_groupby' => $chart_groupby,
+		'chart_data' => rawurlencode( $chart_data ),
+		'jsonMonthAbbrev' => rawurlencode( $jsonMonthAbbrev ),
+		'gross_sale_amount' => __( 'Gross sales amount', 'auropay-gateway' ),
+		'refund_amount' => __( 'Refund amount', 'auropay-gateway' ),
+		'failed_amount' => __( 'Failed amount', 'auropay-gateway' ),
+		'sales' => __( 'Sales', 'auropay-gateway' ),
+		'refunds' => __( 'Refunds', 'auropay-gateway' ),
+		'failed' => __( 'Failed', 'auropay-gateway' ),
+	) );
+}
 
-	jQuery('#sale_box').click(
-		function() {
-			drawGraph('sale');
-			jQuery('#data_type').val('sale');
-			jQuery('#summary_box_type').html('Sales');
-			jQuery('#sales_stat_details').show();
-			jQuery('#refunded-stat-details').hide();
-			jQuery('#failed-stat-details').hide();
-		}
-	);
-
-	jQuery('#failed_box').click(
-		function() {
-			drawGraph('failed');
-			jQuery('#data_type').val('failed');
-			jQuery('#summary_box_type').html('Failed');
-			jQuery('#sales_stat_details').hide();
-			jQuery('#refunded-stat-details').hide();
-			jQuery('#failed-stat-details').show();
-		}
-	);
-
-	jQuery('#refunded_box').click(
-		function() {
-			drawGraph('refunded');
-			jQuery('#data_type').val('refunded');
-			jQuery('#summary_box_type').html('Refunded');
-			jQuery('#sales_stat_details').hide();
-			jQuery('#failed-stat-details').hide();
-			jQuery('#refunded-stat-details').show();
-		}
-	);
-
-	jQuery('#line_chart').click(
-		function() {
-			jQuery('#chart_type').val('line');
-			drawGraph(jQuery('#data_type').val());
-			jQuery('#line_chart').prop('disabled', true);
-			jQuery('#line_chart').css('background-color', 'gray');
-			jQuery('#bar_chart').css('background-color', '');
-			jQuery('#bar_chart').prop('disabled', false);
-		}
-	);
-	jQuery('#bar_chart').click(
-		function() {
-			jQuery('#chart_type').val('bar');
-			drawGraph(jQuery('#data_type').val());
-			jQuery('#line_chart').prop('disabled', false);
-			jQuery('#bar_chart').prop('disabled', true);
-			jQuery('#bar_chart').css('background-color', 'gray');
-			jQuery('#line_chart').css('background-color', '');
-
-		}
-	);
-	jQuery('#custom').click(
-		function() {
-			jQuery('#custom-box').show();
-			jQuery('#custom').addClass('active');
-			jQuery('.odate_range').removeClass('active');
-		}
-	);
-});
-</script>
-
-<script>
-var current_range = '<?php echo esc_js( $current_range ); ?>';
-jQuery(function() {
-	jQuery(".custom").hide();
-	if (current_range == 'custom') {
-		jQuery(".custom").show();
-	}
-
-	jQuery("#from_datepicker").datepicker({
-		changeMonth: true,
-		changeYear: true,
-		dateFormat: "dd-mm-yy",
-		maxDate: 0,
-		onSelect: function(selected) {
-			jQuery("#to_datepicker").datepicker("option", "minDate", selected);
-		}
-	});
-	jQuery("#to_datepicker").datepicker({
-		changeMonth: true,
-		changeYear: true,
-		dateFormat: "dd-mm-yy",
-		maxDate: 0,
-		onSelect: function(selected) {
-			jQuery("#from_datepicker").datepicker("option", "maxDate", selected);
-		}
-	});
-});
-</script>
+add_action( 'admin_footer', function () use ( $current_range, $chart_colours, $barwidth, $chart_groupby, $chart_data, $jsonMonthAbbrev ) {
+	auropay_enqueue_report( $current_range, $chart_colours, $barwidth, $chart_groupby, $chart_data, $jsonMonthAbbrev );
+}, 10 );

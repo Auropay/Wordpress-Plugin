@@ -1,9 +1,9 @@
 === Auropay Gateway ===
-Contributors: wordpress
-Tags: wordpress, auropay, payment, gateway
+Contributors: wordpress,developerspayments12
+Tags: auropay, payment, gateway
 Requires at least: 5.6
-Tested up to: 5.6 < 6.7
-Stable tag: 1.0.3
+Tested up to: 6.7
+Stable tag: 1.0.4
 Requires PHP: 7.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -49,10 +49,13 @@ Yes, it does - production and Test (sandbox) mode is driven by the API keys you 
 = 1.0.3 =
 * switch from 1.0.2 to 1.0.3 Added the validation for firstname and lastname
 
+= 1.0.4 =
+* switch from 1.0.3 to 1.0.4 Fixed the wordpress submission issues
+
 == Upgrade Notice ==
 
-= 1.0.3 =
-* switch from 1.0.2 to 1.0.3 Added the validation for firstname and lastname
+= 1.0.4 =
+* switch from 1.0.3 to 1.0.4 Fixed the wordpress submission issues
 
 
 

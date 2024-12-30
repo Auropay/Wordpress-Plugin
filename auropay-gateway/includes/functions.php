@@ -35,13 +35,14 @@ if ( !class_exists( 'AUROPAY_Custom_Log' ) ) {
 		public static function log( $message ) {
 			$logging = get_option( 'auropay_logging' );
 			if ( 'logging' == $logging ) {
-				$logDirectory = WP_CONTENT_DIR . '/uploads/arp-logs';
+				$upload_dir = wp_upload_dir();
+				$upload_path = $upload_dir['basedir'] . '/auropay-gateway';
 
-				if ( !file_exists( $logDirectory ) ) {
-					mkdir( $logDirectory, 0755, true );
+				if ( !file_exists( $upload_path ) ) {
+					wp_mkdir_p( $upload_path );
 				}
 
-				$logFile = $logDirectory . '/auropay-gateway.log';
+				$logFile = $upload_path . '/auropay-gateway.log';
 				$logEntry = '[' . date( 'Y-m-d H:i:s' ) . '] ' . $message . "\n";
 				error_log( $logEntry, 3, $logFile );
 			}

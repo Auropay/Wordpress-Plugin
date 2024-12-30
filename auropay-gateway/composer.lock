@@ -1,9 +1,14 @@
 {
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "bd3963fcb477436ece95c54e3d60c48b",
     "packages": [
         {
             "name": "fpdf/fpdf",
             "version": "1.86.0",
-            "version_normalized": "1.86.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/coreydoughty/Fpdf.git",
@@ -18,7 +23,6 @@
             "require": {
                 "php": ">=5.6.0"
             },
-            "time": "2023-07-04T16:41:45+00:00",
             "type": "library",
             "extra": {
                 "laravel": {
@@ -27,7 +31,6 @@
                     }
                 }
             },
-            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "Fpdf\\": "src/Fpdf"
@@ -50,9 +53,20 @@
                 "pdf",
                 "wrapper"
             ],
-            "install-path": "../fpdf/fpdf"
+            "support": {
+                "issues": "https://github.com/coreydoughty/Fpdf/issues",
+                "source": "https://github.com/coreydoughty/Fpdf/tree/1.86.0"
+            },
+            "time": "2023-07-04T16:41:45+00:00"
         }
     ],
-    "dev": true,
-    "dev-package-names": []
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
 }

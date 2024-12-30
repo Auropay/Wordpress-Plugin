@@ -4,7 +4,8 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 //Path of log file
-$arpLogFile = WP_CONTENT_DIR . '/uploads/arp-logs/auropay-gateway.log';
+$upload_dir = wp_upload_dir();
+$arpLogFile = $upload_dir['basedir'] . '/auropay-gateway/auropay-gateway.log';
 
 // Check if the log file exists
 if ( file_exists( $arpLogFile ) ) {

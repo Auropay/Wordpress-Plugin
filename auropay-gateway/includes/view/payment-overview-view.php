@@ -51,9 +51,9 @@ $arp_status_color = array(
 									<?php
 foreach ( $ranges as $range => $name ) {
 	if ( 'Custom' != $name ) {
-		echo '<li class="' . ( $current_range == $range ? 'active' : '' ) . ' odate_range" id="' . $range . '"><a href="' . esc_url( remove_query_arg( array( 'start_date', 'end_date' ), add_query_arg( 'range', $range ) ) ) . '">' . esc_html( $name, 'auropay-gateway' ) . '</a></li>';
+		echo '<li class="' . ( $current_range == $range ? 'active' : '' ) . ' odate_range" id="' . esc_attr( $range ) . '"><a href="' . esc_url( remove_query_arg( array( 'start_date', 'end_date' ), add_query_arg( 'range', $range ) ) ) . '">' . esc_html( $name ) . '</a></li>';
 	} else {
-		echo '<li class="' . ( $current_range == $range ? 'active' : '' ) . ' custom_range" id="custom" ><a href="#" >' . esc_html( $name, 'auropay-gateway' ) . '</a></li>';
+		echo '<li class="' . ( $current_range == $range ? 'active' : '' ) . ' custom_range" id="custom" ><a href="#" >' . esc_html( $name ) . '</a></li>';
 	}
 }
 ?>
@@ -92,15 +92,11 @@ if ( isset( $_GET['range'] ) && is_array( $_GET['range'] ) ) {
 												<input type="hidden" name="range" value="custom" />
 
 												<?php
-$start_date = isset( $_GET['start_date'] ) ? $_GET['start_date'] : '';
-// Unslash the date (if magic quotes are enabled)
-$unslashed_start_date = wp_unslash( $start_date );
-// Sanitize the date using sanitize_text_field()
-$pickerStartDate = sanitize_text_field( $unslashed_start_date );
+$start_date = isset( $_GET['start_date'] ) ? sanitize_text_field( wp_unslash( $_GET['start_date'] ) ) : '';
+$pickerStartDate = $start_date;
 
-$end_date = isset( $_GET['end_date'] ) ? $_GET['end_date'] : '';
-$unslashed_end_date = wp_unslash( $end_date );
-$pickerEndDate = sanitize_text_field( $unslashed_end_date );
+$end_date = isset( $_GET['end_date'] ) ? sanitize_text_field( wp_unslash( $_GET['end_date'] ) ) : '';
+$pickerEndDate = $end_date;
 ?>
 												<span> From: </span>
 												<input type="text" size="20" id="from_datepicker"
@@ -122,9 +118,9 @@ $pickerEndDate = sanitize_text_field( $unslashed_end_date );
 							</div>
 
 							<?php
-global $tot_payments;
-global $tot_refunded;
-global $tot_failed;
+global $auropay_tot_payments;
+global $auropay_tot_refunded;
+global $auropay_tot_failed;
 ?>
 							<div class="pymnt-hdr">
 								<div class="leftbox-sales" id="sale_box">
@@ -136,7 +132,7 @@ global $tot_failed;
 											<strong> Sales</strong>
 										</div>
 										<div class="pymnt-amt clr-grn">
-											<strong><span>₹</span><?php echo esc_html( $tot_payments ); ?></span></strong>
+											<strong><span>₹</span><?php echo esc_html( $auropay_tot_payments ); ?></span></strong>
 										</div>
 									</div>
 								</div>
@@ -149,7 +145,7 @@ global $tot_failed;
 											<strong>Refund</strong>
 										</div>
 										<div class="pymnt-amt clr-orng">
-											<strong><span><strong><span>₹</span><?php echo esc_html( $tot_refunded ); ?></span></strong></span></strong>
+											<strong><span><strong><span>₹</span><?php echo esc_html( $auropay_tot_refunded ); ?></span></strong></span></strong>
 										</div>
 									</div>
 								</div>
@@ -162,7 +158,7 @@ global $tot_failed;
 											<strong>Failed</strong>
 										</div>
 										<div class="pymnt-amt clr-rd">
-											<strong><span>₹</span><?php echo esc_html( $tot_failed ); ?></span></strong>
+											<strong><span>₹</span><?php echo esc_html( $auropay_tot_failed ); ?></span></strong>
 										</div>
 									</div>
 								</div>
@@ -177,75 +173,75 @@ global $tot_failed;
 										<img alt="Credit Card" class="ico-crd"
 											src="<?php echo esc_url( AUROPAY_PLUGIN_URL ); ?>/assets/images/cards/ico-card.png" />
 										<span><strong>Credit Card </strong>
-											<?php echo esc_html( $all_order_data['sale_tot_credit_card_payments'] ); ?>
+											<?php echo esc_html( $auropay_all_order_data['sale_tot_credit_card_payments'] ); ?>
 											&nbsp;&nbsp;</span>
 										<img alt="Debit Card" class="ico-crd"
 											src="<?php echo esc_url( AUROPAY_PLUGIN_URL ); ?>/assets/images/cards/ico-card.png" />
 										<span><strong>Debit Card
-											</strong><?php echo esc_html( $all_order_data['sale_tot_debit_card_payments'] ); ?>
+											</strong><?php echo esc_html( $auropay_all_order_data['sale_tot_debit_card_payments'] ); ?>
 											&nbsp;&nbsp;</span>
 										<img alt="Net Banking" class="ico-nb"
 											src="<?php echo esc_url( AUROPAY_PLUGIN_URL ); ?>/assets/images/cards/ico-ach.png" />
 										<span><strong>Net Banking
-											</strong><?php echo esc_html( $all_order_data['sale_tot_netbanking_payments'] ); ?></span>
+											</strong><?php echo esc_html( $auropay_all_order_data['sale_tot_netbanking_payments'] ); ?></span>
 										<img alt="UPI" class="ico-upi"
 											src="<?php echo esc_url( AUROPAY_PLUGIN_URL ); ?>/assets/images/cards/ico-upi.png" />
 										<span><strong>UPI
-											</strong><?php echo esc_html( $all_order_data['sale_tot_upi_payments'] ); ?></span>
+											</strong><?php echo esc_html( $auropay_all_order_data['sale_tot_upi_payments'] ); ?></span>
 										<img alt="Wallet" class="ico-upi"
 											src="<?php echo esc_url( AUROPAY_PLUGIN_URL ); ?>/assets/images/cards/ico-wallet.png" />
 										<span><strong>Wallet
-											</strong><?php echo esc_html( $all_order_data['sale_tot_wallet_payments'] ); ?></span>
+											</strong><?php echo esc_html( $auropay_all_order_data['sale_tot_wallet_payments'] ); ?></span>
 									</div>
 
 									<div class="card-label" id="refunded-stat-details">
 										<img alt="Credit Card" class="ico-crd"
 											src="<?php echo esc_url( AUROPAY_PLUGIN_URL ); ?>/assets/images/cards/ico-card.png" />
 										<span><strong>Credit Card </strong>
-											<?php echo esc_html( $all_order_data['refunded_tot_credit_card_payments'] ); ?>
+											<?php echo esc_html( $auropay_all_order_data['refunded_tot_credit_card_payments'] ); ?>
 											&nbsp;&nbsp;</span>
 										<img alt="Debit Card" class="ico-crd"
 											src="<?php echo esc_url( AUROPAY_PLUGIN_URL ); ?>/assets/images/cards/ico-card.png" />
 										<span><strong>Debit Card
-											</strong><?php echo esc_html( $all_order_data['refunded_tot_debit_card_payments'] ); ?>
+											</strong><?php echo esc_html( $auropay_all_order_data['refunded_tot_debit_card_payments'] ); ?>
 											&nbsp;&nbsp;</span>
 										<img alt="Net Banking" class="ico-nb"
 											src="<?php echo esc_url( AUROPAY_PLUGIN_URL ); ?>/assets/images/cards/ico-ach.png" />
 										<span><strong>Net Banking
-											</strong><?php echo esc_html( $all_order_data['refunded_tot_netbanking_payments'] ); ?></span>
+											</strong><?php echo esc_html( $auropay_all_order_data['refunded_tot_netbanking_payments'] ); ?></span>
 										<img alt="UPI" class="ico-upi"
 											src="<?php echo esc_url( AUROPAY_PLUGIN_URL ); ?>/assets/images/cards/ico-upi.png" />
 										<span><strong>UPI
-											</strong><?php echo esc_html( $all_order_data['refunded_tot_upi_payments'] ); ?></span>
+											</strong><?php echo esc_html( $auropay_all_order_data['refunded_tot_upi_payments'] ); ?></span>
 										<img alt="Wallet" class="ico-upi"
 											src="<?php echo esc_url( AUROPAY_PLUGIN_URL ); ?>/assets/images/cards/ico-wallet.png" />
 										<span><strong>Wallet
-											</strong><?php echo esc_html( $all_order_data['refunded_tot_wallet_payments'] ); ?></span>
+											</strong><?php echo esc_html( $auropay_all_order_data['refunded_tot_wallet_payments'] ); ?></span>
 									</div>
 
 									<div class="card-label" id="failed-stat-details">
 										<img alt="Credit Card" class="ico-crd"
 											src="<?php echo esc_url( AUROPAY_PLUGIN_URL ); ?>/assets/images/cards/ico-card.png" />
 										<span><strong>Credit Card </strong>
-											<?php echo esc_html( $all_order_data['failed_tot_credit_card_payments'] ); ?>
+											<?php echo esc_html( $auropay_all_order_data['failed_tot_credit_card_payments'] ); ?>
 											&nbsp;&nbsp;</span>
 										<img alt="Debit Card" class="ico-crd"
 											src="<?php echo esc_url( AUROPAY_PLUGIN_URL ) ?>/assets/images/cards/ico-card.png" />
 										<span><strong>Debit Card
-											</strong><?php echo esc_html( $all_order_data['failed_tot_debit_card_payments'] ); ?>
+											</strong><?php echo esc_html( $auropay_all_order_data['failed_tot_debit_card_payments'] ); ?>
 											&nbsp;&nbsp;</span>
 										<img alt="Net Banking" class="ico-nb"
 											src="<?php echo esc_url( AUROPAY_PLUGIN_URL ); ?>/assets/images/cards/ico-ach.png" />
 										<span><strong>Net Banking
-											</strong><?php echo esc_html( $all_order_data['failed_tot_netbanking_payments'] ); ?></span>
+											</strong><?php echo esc_html( $auropay_all_order_data['failed_tot_netbanking_payments'] ); ?></span>
 										<img alt="UPI" class="ico-upi"
 											src="<?php echo esc_url( AUROPAY_PLUGIN_URL ); ?>/assets/images/cards/ico-upi.png" />
 										<span><strong>UPI
-											</strong><?php echo esc_html( $all_order_data['failed_tot_upi_payments'] ); ?></span>
+											</strong><?php echo esc_html( $auropay_all_order_data['failed_tot_upi_payments'] ); ?></span>
 										<img alt="Wallet" class="ico-upi"
 											src="<?php echo esc_url( AUROPAY_PLUGIN_URL ); ?>/assets/images/cards/ico-wallet.png" />
 										<span><strong>Wallet
-											</strong><?php echo esc_html( $all_order_data['failed_tot_wallet_payments'] ); ?></span>
+											</strong><?php echo esc_html( $auropay_all_order_data['failed_tot_wallet_payments'] ); ?></span>
 									</div>
 								</div>
 								<div class="grph-cntrl" id="show_main_all">
@@ -290,22 +286,22 @@ global $tot_failed;
 							<li class="all"><a
 									href="?page=payment-overview&orderby=post_id&order=desc&transaction_status=all&<?php echo esc_attr( $range_filter ); ?>">All
 									<span
-										class="count">(<?php echo esc_html( $all_order_data['total_all_records'] ); ?>)</span></a>
+										class="count">(<?php echo esc_html( $auropay_all_order_data['total_all_records'] ); ?>)</span></a>
 								|</li>
 							<li><a
 									href="?page=payment-overview&orderby=post_id&order=desc&transaction_status=completed&<?php echo esc_attr( $range_filter ); ?>">Sales
 									<span
-										class="count">(<?php echo esc_html( $all_order_data['total_completed_records'] ); ?>)</span></a>
+										class="count">(<?php echo esc_html( $auropay_all_order_data['total_completed_records'] ); ?>)</span></a>
 								|</li>
 							<li><a
 									href="?page=payment-overview&orderby=post_id&order=desc&transaction_status=refund&<?php echo esc_attr( $range_filter ); ?>">Refunded
 									<span
-										class="count">(<?php echo esc_html( $all_order_data['total_refund_records'] ); ?>)</span></a>
+										class="count">(<?php echo esc_html( $auropay_all_order_data['total_refund_records'] ); ?>)</span></a>
 								|</li>
 							<li><a
 									href="?page=payment-overview&orderby=post_id&order=desc&transaction_status=failed&<?php echo esc_attr( $range_filter ); ?>">Failed
 									<span
-										class="count">(<?php echo esc_html( $all_order_data['total_failed_records'] ); ?>)</span></a>
+										class="count">(<?php echo esc_html( $auropay_all_order_data['total_failed_records'] ); ?>)</span></a>
 							</li>
 						</ul>
 
@@ -332,16 +328,16 @@ global $tot_failed;
 								<thead>
 									<tr>
 										<th scope="col" id="order_number"
-											class="manage-column column-order_number c_order_number column-primary1 sortable <?php echo esc_html( $all_order_data['link_order'] ); ?>">
+											class="manage-column column-order_number c_order_number column-primary1 sortable <?php echo esc_html( $auropay_all_order_data['link_order'] ); ?>">
 											<a
-												href="?page=payment-overview&orderby=post_id&order=<?php echo esc_html( $all_order_data['link_order'] ); ?>&<?php echo esc_attr( $range_filter ); ?>">
+												href="?page=payment-overview&orderby=post_id&order=<?php echo esc_html( $auropay_all_order_data['link_order'] ); ?>&<?php echo esc_attr( $range_filter ); ?>">
 												<span>Order</span><span class="sorting-indicator"></span>
 											</a>
 										</th>
 										<th scope="col" id="order_date"
 											class="manage-column column-order_number   c_order_date column-primary2 sortable">
 											<a
-												href="?page=payment-overview&order=<?php echo esc_html( $all_order_data['link_order'] ); ?>&<?php echo esc_attr( $range_filter ); ?>">
+												href="?page=payment-overview&order=<?php echo esc_html( $auropay_all_order_data['link_order'] ); ?>&<?php echo esc_attr( $range_filter ); ?>">
 												<span>Date & Time (IST)</span>
 											</a>
 										</th>
@@ -370,8 +366,8 @@ global $tot_failed;
 								</thead>
 								<tbody id="the-list">
 									<?php
-if ( !empty( $all_order_data['order_datas'] ) ) {
-	foreach ( $all_order_data['order_datas'] as $order_id ) {
+if ( !empty( $auropay_all_order_data['order_datas'] ) ) {
+	foreach ( $auropay_all_order_data['order_datas'] as $order_id ) {
 		$type_array = array( '3' => 'Credit Card', '4' => 'Debit Card', '6' => 'UPI', '7' => 'NetBanking', '8' => 'Wallets' );
 		$payment_method = get_post_meta( $order_id, '_auropay_transaction_channel_type', true );
 		$auth_code = get_post_meta( $order_id, '_auropay_transaction_auth_code', true );
@@ -462,15 +458,15 @@ if ( !empty( $all_order_data['order_datas'] ) ) {
 							</table>
 						</div>
 						<?php
-if ( !empty( $all_order_data['total_items'] ) ) {
+if ( !empty( $auropay_all_order_data['total_items'] ) ) {
 	?>
 						<div class="tablenav bottom">
 							<div class="tablenav-pages order-lst-tp">
 								<span class="displaying-num">Total
-									<?php echo esc_html( $all_order_data['total_items'] ); ?>
+									<?php echo esc_html( $auropay_all_order_data['total_items'] ); ?>
 									items</span>
 								<span
-									class="pagination_links"><?php echo wp_kses_post( $all_order_data['page_links'] ); ?></span>
+									class="pagination_links"><?php echo wp_kses_post( $auropay_all_order_data['page_links'] ); ?></span>
 							</div>
 							<br class="clear">
 						</div>

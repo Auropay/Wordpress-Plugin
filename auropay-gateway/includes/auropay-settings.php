@@ -24,8 +24,8 @@ define( 'AUROPAY_SETTING_SECTION', 'auropay_setting_section' );
 if ( !function_exists( 'auropay_settings' ) ) {
 	function auropay_settings() {
 		add_menu_page(
-			__( 'Auropay Settingss', 'auropay-settings' ),
-			__( 'Auropay Settings', 'auropay-settings' ),
+			__( 'Auropay Settingss', 'auropay-gateway' ),
+			__( 'Auropay Settings', 'auropay-gateway' ),
 			'manage_options',
 			'auropay-settings',
 			'auropay_settings_callback',
@@ -582,7 +582,7 @@ if ( !function_exists( 'auropay_expiry_callback' ) ) {
 	<?php
 foreach ( $options as $value ) {
 			?>
-	<option value="<?php echo $value ?>" <?php selected( $value, $auropay_expiry )?>><?php echo $value ?> Minutes
+	<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $value, $auropay_expiry )?>><?php echo esc_html( $value ); ?> Minutes
 	</option>;
 	<?php
 }

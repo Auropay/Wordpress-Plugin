@@ -16,7 +16,7 @@ if ( !defined( 'ABSPATH' ) ) {
 define( 'AUROPAY_AMOUNT', '_amount' );
 define( 'AUROPAY_TRANSACTION_DATE', '_auropay_transaction_date' );
 
-global $all_order_data;
+global $auropay_all_order_data;
 
 if ( !function_exists( 'auropay_submenu_link' ) ) {
 	function auropay_submenu_link() {
@@ -72,10 +72,7 @@ if ( !function_exists( 'auropay_admin_style_js' ) ) {
 
 		wp_enqueue_script( 'jquery-blockui-js', AUROPAY_PLUGIN_URL . '/assets/js/jquery-blockui/jquery.blockUI.min.js' );
 		wp_enqueue_script( 'flot-js', AUROPAY_PLUGIN_URL . '/assets/js/jquery-flot/jquery.flot.min.js' );
-		wp_enqueue_script( 'flot-resize-js', AUROPAY_PLUGIN_URL . '/assets/js/jquery-flot/jquery.flot.resize.min.js' );
 		wp_enqueue_script( 'flot-time-js', AUROPAY_PLUGIN_URL . '/assets/js/jquery-flot/jquery.flot.time.min.js' );
-		wp_enqueue_script( 'flot-pie-js', AUROPAY_PLUGIN_URL . '/assets/js/jquery-flot/jquery.flot.pie.min.js' );
-		wp_enqueue_script( 'flot-stack-js', AUROPAY_PLUGIN_URL . '/assets/js/jquery-flot/jquery.flot.stack.min.js' );
 	}
 }
 
@@ -88,23 +85,23 @@ if ( !function_exists( 'auropay_admin_style_js' ) ) {
  */
 if ( !function_exists( 'auropay_calculate_current_range' ) ) {
 	function auropay_calculate_current_range( $current_range ) {
-		global $start_date;
-		global $end_date;
+		global $auropay_start_date;
+		global $auropay_end_date;
 
 		switch ( $current_range ) {
 			case 'custom':
-				$start_date = max( strtotime( '-20 years' ), strtotime( sanitize_text_field( $_GET['start_date'] ) ) );
+				$auropay_start_date = max( strtotime( '-20 years' ), strtotime( sanitize_text_field( $_GET['start_date'] ) ) );
 
 				if ( empty( $_GET['end_date'] ) ) {
-					$end_date = strtotime( 'midnight', current_time( 'timestamp' ) );
+					$auropay_end_date = strtotime( 'midnight', current_time( 'timestamp' ) );
 				} else {
-					$end_date = strtotime( 'midnight', strtotime( sanitize_text_field( $_GET['end_date'] ) ) );
+					$auropay_end_date = strtotime( 'midnight', strtotime( sanitize_text_field( $_GET['end_date'] ) ) );
 				}
 				$interval = 0;
-				$min_date = $start_date;
+				$min_date = $auropay_start_date;
 
 				// phpcs:ignore WordPress.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
-				while ( ( $min_date = strtotime( '+1 MONTH', $min_date ) ) <= $end_date ) {
+				while ( ( $min_date = strtotime( '+1 MONTH', $min_date ) ) <= $auropay_end_date ) {
 					$interval++;
 				}
 
@@ -116,24 +113,24 @@ if ( !function_exists( 'auropay_calculate_current_range' ) ) {
 				}
 				break;
 			case 'year':
-				$start_date = strtotime( date( 'Y-01-01', current_time( 'timestamp' ) ) );
-				$end_date = strtotime( 'midnight', current_time( 'timestamp' ) );
+				$auropay_start_date = strtotime( date( 'Y-01-01', current_time( 'timestamp' ) ) );
+				$auropay_end_date = strtotime( 'midnight', current_time( 'timestamp' ) );
 				$chart_groupby = 'month';
 				break;
 			case 'last_month':
 				$first_day_current_month = strtotime( date( 'Y-m-01', current_time( 'timestamp' ) ) );
-				$start_date = strtotime( date( 'Y-m-01', strtotime( '-1 DAY', $first_day_current_month ) ) );
-				$end_date = strtotime( date( 'Y-m-t', strtotime( '-1 DAY', $first_day_current_month ) ) );
+				$auropay_start_date = strtotime( date( 'Y-m-01', strtotime( '-1 DAY', $first_day_current_month ) ) );
+				$auropay_end_date = strtotime( date( 'Y-m-t', strtotime( '-1 DAY', $first_day_current_month ) ) );
 				$chart_groupby = 'day';
 				break;
 			case 'month':
-				$start_date = strtotime( date( 'Y-m-01', current_time( 'timestamp' ) ) );
-				$end_date = strtotime( 'midnight', current_time( 'timestamp' ) );
+				$auropay_start_date = strtotime( date( 'Y-m-01', current_time( 'timestamp' ) ) );
+				$auropay_end_date = strtotime( 'midnight', current_time( 'timestamp' ) );
 				$chart_groupby = 'day';
 				break;
 			case '7day':
-				$start_date = strtotime( '-6 days', strtotime( 'midnight', current_time( 'timestamp' ) ) );
-				$end_date = strtotime( 'midnight', current_time( 'timestamp' ) );
+				$auropay_start_date = strtotime( '-6 days', strtotime( 'midnight', current_time( 'timestamp' ) ) );
+				$auropay_end_date = strtotime( 'midnight', current_time( 'timestamp' ) );
 				$chart_groupby = 'day';
 				break;
 			default:
@@ -143,16 +140,16 @@ if ( !function_exists( 'auropay_calculate_current_range' ) ) {
 		switch ( $chart_groupby ) {
 			case 'day':
 				$barwidth = 60 * 60 * 24 * 1000;
-				$interval = absint( ceil( max( 0, ( $end_date - $start_date ) / ( 60 * 60 * 24 ) ) ) );
+				$interval = absint( ceil( max( 0, ( $auropay_end_date - $auropay_start_date ) / ( 60 * 60 * 24 ) ) ) );
 				break;
 
 			case 'month':
 				$barwidth = 60 * 60 * 24 * 7 * 4 * 1000;
 				$interval = 0;
-				$min_date = strtotime( date( 'Y-m-01', $start_date ) );
+				$min_date = strtotime( date( 'Y-m-01', $auropay_start_date ) );
 
 				// phpcs:ignore WordPress.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
-				while ( ( $min_date = strtotime( '+1 MONTH', $min_date ) ) <= $end_date ) {
+				while ( ( $min_date = strtotime( '+1 MONTH', $min_date ) ) <= $auropay_end_date ) {
 					$interval++;
 				}
 				break;
@@ -160,9 +157,9 @@ if ( !function_exists( 'auropay_calculate_current_range' ) ) {
 				break;
 		}
 
-		$end_date = date( 'd-m-Y', $end_date ) . " 23:59:59";
-		$dateArr['start_date'] = $start_date;
-		$dateArr['end_date'] = strtotime( $end_date );
+		$auropay_end_date = date( 'd-m-Y', $auropay_end_date ) . " 23:59:59";
+		$dateArr['start_date'] = $auropay_start_date;
+		$dateArr['end_date'] = strtotime( $auropay_end_date );
 		$dateArr['chart_groupby'] = $chart_groupby;
 		$dateArr['barwidth'] = $barwidth;
 		$dateArr['interval'] = $interval;
@@ -176,24 +173,24 @@ if ( !function_exists( 'auropay_calculate_current_range' ) ) {
  * @return array
  */
 function auropay_get_order_data() {
-	global $tot_payments, $tot_refunded, $tot_failed, $total_all_records;
-	global $total_completed_records, $total_failed_records, $total_refund_records;
-	global $sale_tot_credit_card_payments, $sale_tot_debit_card_payments, $sale_tot_netbanking_payments;
-	global $sale_tot_upi_payments, $sale_tot_wallet_payments, $chart_datas;
-	global $refunded_tot_credit_card_payments, $refunded_tot_debit_card_payments, $refunded_tot_netbanking_payments;
-	global $refunded_tot_upi_payments, $refunded_tot_wallet_payments;
-	global $failed_tot_credit_card_payments, $failed_tot_debit_card_payments;
-	global $failed_tot_netbanking_payments, $failed_tot_upi_payments, $failed_tot_wallet_payments;
-	global $order_datas, $total_orders, $num_of_pages, $dates;
-	$chart_datas['sale_amount'] = [];
-	$chart_datas['refund_amount'] = [];
-	$chart_datas['failed_amount'] = [];
+	global $auropay_tot_payments, $auropay_tot_refunded, $auropay_tot_failed, $auropay_total_all_records;
+	global $total_completed_records, $total_failed_records, $auropay_total_refund_records;
+	global $sale_tot_credit_card_payments, $sale_tot_debit_card_payments, $auropay_sale_tot_netbanking_payments;
+	global $sale_tot_upi_payments, $sale_tot_wallet_payments, $auropay_chart_datas;
+	global $refunded_tot_credit_card_payments, $refunded_tot_debit_card_payments, $auropay_refunded_tot_netbanking_payments;
+	global $refunded_tot_upi_payments, $auropay_refunded_tot_wallet_payments;
+	global $failed_tot_credit_card_payments, $auropay_failed_tot_debit_card_payments;
+	global $failed_tot_netbanking_payments, $failed_tot_upi_payments, $auropay_failed_tot_wallet_payments;
+	global $order_datas, $total_orders, $num_of_pages, $auropay_dates;
+	$auropay_chart_datas['sale_amount'] = [];
+	$auropay_chart_datas['refund_amount'] = [];
+	$auropay_chart_datas['failed_amount'] = [];
 
 	list( $page_num, $limit, $order, $link_order, $range, $range_filter, $current_range, $ranges ) = auropay_initialize_settings();
 	$order_data = auropay_get_order_query( $order );
 
 	foreach ( $order_data as $value ) {
-		$dates = auropay_calculate_current_range( $range );
+		$auropay_dates = auropay_calculate_current_range( $range );
 		$transaction_date = get_post_meta( $value->post_id, AUROPAY_TRANSACTION_DATE, true );
 		$order_status = get_post_meta( $value->post_id, '_auropay_order_status', true );
 		$transaction_type = get_post_meta( $value->post_id, '_auropay_transaction_channel_type', true );
@@ -203,8 +200,8 @@ function auropay_get_order_data() {
 
 		$sale_amount = get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
 		$sale_amount = number_format( (float) $sale_amount, 2, '.', '' );
-		if ( strtotime( $transaction_date ) >= $dates['start_date'] && strtotime( $transaction_date ) < $dates['end_date'] ) {
-			$total_all_records++;
+		if ( strtotime( $transaction_date ) >= $auropay_dates['start_date'] && strtotime( $transaction_date ) < $auropay_dates['end_date'] ) {
+			$auropay_total_all_records++;
 			$transaction_status = isset( $_GET['transaction_status'] ) ? sanitize_text_field( $_GET['transaction_status'] ) : '';
 
 			if ( 'Authorized' == $order_status ) {
@@ -223,17 +220,17 @@ function auropay_get_order_data() {
 					$sale_tot_upi_payments = $sale_tot_upi_payments + get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
 				}
 				if ( 7 == $transaction_type ) {
-					$sale_tot_netbanking_payments = $sale_tot_netbanking_payments + get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
+					$auropay_sale_tot_netbanking_payments = $auropay_sale_tot_netbanking_payments + get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
 				}
 				if ( 8 == $transaction_type ) {
 					$sale_tot_wallet_payments = $sale_tot_wallet_payments + get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
 				}
 
-				$tot_payments = $tot_payments + get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
-				if ( isset( $chart_datas['sale_amount'][$order_date] ) ) {
-					$chart_datas['sale_amount'][$order_date] += $sale_amount;
+				$auropay_tot_payments = $auropay_tot_payments + get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
+				if ( isset( $auropay_chart_datas['sale_amount'][$order_date] ) ) {
+					$auropay_chart_datas['sale_amount'][$order_date] += $sale_amount;
 				} else {
-					$chart_datas['sale_amount'][$order_date] = $sale_amount;
+					$auropay_chart_datas['sale_amount'][$order_date] = $sale_amount;
 				}
 			} elseif ( 'Failed' == $order_status ) {
 				if ( 'failed' == $transaction_status ) {
@@ -244,7 +241,7 @@ function auropay_get_order_data() {
 					$failed_tot_credit_card_payments = $failed_tot_credit_card_payments + get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
 				}
 				if ( 4 == $transaction_type ) {
-					$failed_tot_debit_card_payments = $failed_tot_debit_card_payments + get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
+					$auropay_failed_tot_debit_card_payments = $auropay_failed_tot_debit_card_payments + get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
 				}
 				if ( 6 == $transaction_type ) {
 					$failed_tot_upi_payments = $failed_tot_upi_payments + get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
@@ -253,16 +250,16 @@ function auropay_get_order_data() {
 					$failed_tot_netbanking_payments = $failed_tot_netbanking_payments + get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
 				}
 				if ( 8 == $transaction_type ) {
-					$failed_tot_wallet_payments = $failed_tot_wallet_payments + get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
+					$auropay_failed_tot_wallet_payments = $auropay_failed_tot_wallet_payments + get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
 				}
 
 				$total_failed_records++;
-				$tot_failed = $tot_failed + get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
+				$auropay_tot_failed = $auropay_tot_failed + get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
 
-				if ( isset( $chart_datas['failed_amount'][$order_date] ) ) {
-					$chart_datas['failed_amount'][$order_date] += $sale_amount;
+				if ( isset( $auropay_chart_datas['failed_amount'][$order_date] ) ) {
+					$auropay_chart_datas['failed_amount'][$order_date] += $sale_amount;
 				} else {
-					$chart_datas['failed_amount'][$order_date] = $sale_amount;
+					$auropay_chart_datas['failed_amount'][$order_date] = $sale_amount;
 				}
 			} elseif ( 'Refunded' == $order_status ) {
 				if ( 'refund' == $transaction_status ) {
@@ -278,18 +275,18 @@ function auropay_get_order_data() {
 					$refunded_tot_upi_payments = $refunded_tot_upi_payments + get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
 				}
 				if ( 7 == $transaction_type ) {
-					$refunded_tot_netbanking_payments = $refunded_tot_netbanking_payments + get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
+					$auropay_refunded_tot_netbanking_payments = $auropay_refunded_tot_netbanking_payments + get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
 				}
 				if ( 8 == $transaction_type ) {
-					$refunded_tot_wallet_payments = $refunded_tot_wallet_payments + get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
+					$auropay_refunded_tot_wallet_payments = $auropay_refunded_tot_wallet_payments + get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
 				}
-				$total_refund_records++;
-				$tot_refunded = $tot_refunded + get_post_meta( $value->post_id, '_refund_amount', true );
+				$auropay_total_refund_records++;
+				$auropay_tot_refunded = $auropay_tot_refunded + get_post_meta( $value->post_id, '_refund_amount', true );
 
-				if ( isset( $chart_datas['refund_amount'][$order_date] ) ) {
-					$chart_datas['refund_amount'][$order_date] += $sale_amount;
+				if ( isset( $auropay_chart_datas['refund_amount'][$order_date] ) ) {
+					$auropay_chart_datas['refund_amount'][$order_date] += $sale_amount;
 				} else {
-					$chart_datas['refund_amount'][$order_date] = $sale_amount;
+					$auropay_chart_datas['refund_amount'][$order_date] = $sale_amount;
 				}
 			}
 			if ( 'all' == $transaction_status || empty( $transaction_status ) ) {
@@ -309,27 +306,27 @@ function auropay_get_order_data() {
 		}
 	}
 
-	( !empty( $chart_datas['sale_amount'] ) ) ? ksort( $chart_datas['sale_amount'] ) : $chart_datas['sale_amount'];
-	( !empty( $chart_datas['failed_amount'] ) ) ? ksort( $chart_datas['failed_amount'] ) : $chart_datas['failed_amount'];
-	( !empty( $chart_datas['refund_amount'] ) ) ? ksort( $chart_datas['refund_amount'] ) : $chart_datas['refund_amount'];
+	( !empty( $auropay_chart_datas['sale_amount'] ) ) ? ksort( $auropay_chart_datas['sale_amount'] ) : $auropay_chart_datas['sale_amount'];
+	( !empty( $auropay_chart_datas['failed_amount'] ) ) ? ksort( $auropay_chart_datas['failed_amount'] ) : $auropay_chart_datas['failed_amount'];
+	( !empty( $auropay_chart_datas['refund_amount'] ) ) ? ksort( $auropay_chart_datas['refund_amount'] ) : $auropay_chart_datas['refund_amount'];
 
 	$sale_tot_credit_card_payments = number_format( (float) $sale_tot_credit_card_payments, 2, '.', '' );
 	$sale_tot_debit_card_payments = number_format( (float) $sale_tot_debit_card_payments, 2, '.', '' );
-	$sale_tot_netbanking_payments = number_format( (float) $sale_tot_netbanking_payments, 2, '.', '' );
+	$auropay_sale_tot_netbanking_payments = number_format( (float) $auropay_sale_tot_netbanking_payments, 2, '.', '' );
 	$sale_tot_upi_payments = number_format( (float) $sale_tot_upi_payments, 2, '.', '' );
 	$sale_tot_wallet_payments = number_format( (float) $sale_tot_wallet_payments, 2, '.', '' );
 
 	$refunded_tot_credit_card_payments = number_format( (float) $refunded_tot_credit_card_payments, 2, '.', '' );
 	$refunded_tot_debit_card_payments = number_format( (float) $refunded_tot_debit_card_payments, 2, '.', '' );
-	$refunded_tot_netbanking_payments = number_format( (float) $refunded_tot_netbanking_payments, 2, '.', '' );
+	$auropay_refunded_tot_netbanking_payments = number_format( (float) $auropay_refunded_tot_netbanking_payments, 2, '.', '' );
 	$refunded_tot_upi_payments = number_format( (float) $refunded_tot_upi_payments, 2, '.', '' );
-	$refunded_tot_wallet_payments = number_format( (float) $refunded_tot_wallet_payments, 2, '.', '' );
+	$auropay_refunded_tot_wallet_payments = number_format( (float) $auropay_refunded_tot_wallet_payments, 2, '.', '' );
 
 	$failed_tot_credit_card_payments = number_format( (float) $failed_tot_credit_card_payments, 2, '.', '' );
-	$failed_tot_debit_card_payments = number_format( (float) $failed_tot_debit_card_payments, 2, '.', '' );
+	$auropay_failed_tot_debit_card_payments = number_format( (float) $auropay_failed_tot_debit_card_payments, 2, '.', '' );
 	$failed_tot_netbanking_payments = number_format( (float) $failed_tot_netbanking_payments, 2, '.', '' );
 	$failed_tot_upi_payments = number_format( (float) $failed_tot_upi_payments, 2, '.', '' );
-	$failed_tot_wallet_payments = number_format( (float) $failed_tot_wallet_payments, 2, '.', '' );
+	$auropay_failed_tot_wallet_payments = number_format( (float) $auropay_failed_tot_wallet_payments, 2, '.', '' );
 
 	if ( !empty( $transaction_status ) ) {
 		if ( 'failed' == $transaction_status ) {
@@ -339,7 +336,7 @@ function auropay_get_order_data() {
 			$total_items = $total_completed_records;
 		}
 		if ( 'refund' == $transaction_status ) {
-			$total_items = $total_refund_records;
+			$total_items = $auropay_total_refund_records;
 		}
 		if ( 'all' == $transaction_status ) {
 			$total_items = $total_orders;
@@ -348,63 +345,63 @@ function auropay_get_order_data() {
 		$total_items = $total_orders;
 	}
 
-	if ( $tot_payments > 0 ) {
-		$tot_payments = round( $tot_payments, 2 );
+	if ( $auropay_tot_payments > 0 ) {
+		$auropay_tot_payments = round( $auropay_tot_payments, 2 );
 	} else {
-		$tot_payments = 0;
+		$auropay_tot_payments = 0;
 	}
-	if ( $tot_failed > 0 ) {
-		$tot_failed = round( $tot_failed, 2 );
+	if ( $auropay_tot_failed > 0 ) {
+		$auropay_tot_failed = round( $auropay_tot_failed, 2 );
 	} else {
-		$tot_failed = 0;
+		$auropay_tot_failed = 0;
 	}
-	if ( $tot_refunded > 0 ) {
-		$tot_refunded = round( $tot_refunded, 2 );
+	if ( $auropay_tot_refunded > 0 ) {
+		$auropay_tot_refunded = round( $auropay_tot_refunded, 2 );
 	} else {
-		$tot_refunded = 0;
+		$auropay_tot_refunded = 0;
 	}
-	$tot_payments = number_format( (float) $tot_payments, 2, '.', '' );
-	$tot_failed = number_format( (float) $tot_failed, 2, '.', '' );
-	$tot_refunded = number_format( (float) $tot_refunded, 2, '.', '' );
+	$auropay_tot_payments = number_format( (float) $auropay_tot_payments, 2, '.', '' );
+	$auropay_tot_failed = number_format( (float) $auropay_tot_failed, 2, '.', '' );
+	$auropay_tot_refunded = number_format( (float) $auropay_tot_refunded, 2, '.', '' );
 
 	//generate pagination link
-	$all_order_data['page_links'] = auropay_generate_pagination( $num_of_pages, $page_num );
-	$all_order_data['ranges'] = $ranges;
-	$all_order_data['order_datas'] = $order_datas;
-	$all_order_data['start_date'] = $dates['start_date'] ?? 0;
-	$all_order_data['order_csv_data'] = $order_csv_data;
-	$all_order_data['chart_datas'] = $chart_datas;
-	$all_order_data['chart_groupby'] = $dates['chart_groupby'] ?? 0;
-	$all_order_data['interval'] = $dates['interval'] ?? 0;
-	$all_order_data['barwidth'] = $dates['barwidth'] ?? 0;
-	$all_order_data['current_range'] = $current_range;
-	$all_order_data['range_filter'] = $range_filter;
-	$all_order_data['link_order'] = $link_order;
-	$all_order_data['total_all_records'] = $total_all_records;
-	$all_order_data['total_items'] = $total_items;
-	$all_order_data['total_completed_records'] = $total_completed_records;
-	$all_order_data['total_failed_records'] = $total_failed_records;
-	$all_order_data['total_refund_records'] = $total_refund_records;
+	$auropay_all_order_data['page_links'] = auropay_generate_pagination( $num_of_pages, $page_num );
+	$auropay_all_order_data['ranges'] = $ranges;
+	$auropay_all_order_data['order_datas'] = $order_datas;
+	$auropay_all_order_data['start_date'] = $auropay_dates['start_date'] ?? 0;
+	$auropay_all_order_data['order_csv_data'] = $order_csv_data;
+	$auropay_all_order_data['chart_datas'] = $auropay_chart_datas;
+	$auropay_all_order_data['chart_groupby'] = $auropay_dates['chart_groupby'] ?? 0;
+	$auropay_all_order_data['interval'] = $auropay_dates['interval'] ?? 0;
+	$auropay_all_order_data['barwidth'] = $auropay_dates['barwidth'] ?? 0;
+	$auropay_all_order_data['current_range'] = $current_range;
+	$auropay_all_order_data['range_filter'] = $range_filter;
+	$auropay_all_order_data['link_order'] = $link_order;
+	$auropay_all_order_data['total_all_records'] = $auropay_total_all_records;
+	$auropay_all_order_data['total_items'] = $total_items;
+	$auropay_all_order_data['total_completed_records'] = $total_completed_records;
+	$auropay_all_order_data['total_failed_records'] = $total_failed_records;
+	$auropay_all_order_data['total_refund_records'] = $auropay_total_refund_records;
 
-	$all_order_data['sale_tot_credit_card_payments'] = $sale_tot_credit_card_payments;
-	$all_order_data['sale_tot_debit_card_payments'] = $sale_tot_debit_card_payments;
-	$all_order_data['sale_tot_netbanking_payments'] = $sale_tot_netbanking_payments;
-	$all_order_data['sale_tot_wallet_payments'] = $sale_tot_wallet_payments;
-	$all_order_data['sale_tot_upi_payments'] = $sale_tot_upi_payments;
+	$auropay_all_order_data['sale_tot_credit_card_payments'] = $sale_tot_credit_card_payments;
+	$auropay_all_order_data['sale_tot_debit_card_payments'] = $sale_tot_debit_card_payments;
+	$auropay_all_order_data['sale_tot_netbanking_payments'] = $auropay_sale_tot_netbanking_payments;
+	$auropay_all_order_data['sale_tot_wallet_payments'] = $sale_tot_wallet_payments;
+	$auropay_all_order_data['sale_tot_upi_payments'] = $sale_tot_upi_payments;
 
-	$all_order_data['failed_tot_credit_card_payments'] = $failed_tot_credit_card_payments;
-	$all_order_data['failed_tot_debit_card_payments'] = $failed_tot_debit_card_payments;
-	$all_order_data['failed_tot_netbanking_payments'] = $failed_tot_netbanking_payments;
-	$all_order_data['failed_tot_wallet_payments'] = $failed_tot_wallet_payments;
-	$all_order_data['failed_tot_upi_payments'] = $failed_tot_upi_payments;
+	$auropay_all_order_data['failed_tot_credit_card_payments'] = $failed_tot_credit_card_payments;
+	$auropay_all_order_data['failed_tot_debit_card_payments'] = $auropay_failed_tot_debit_card_payments;
+	$auropay_all_order_data['failed_tot_netbanking_payments'] = $failed_tot_netbanking_payments;
+	$auropay_all_order_data['failed_tot_wallet_payments'] = $auropay_failed_tot_wallet_payments;
+	$auropay_all_order_data['failed_tot_upi_payments'] = $failed_tot_upi_payments;
 
-	$all_order_data['refunded_tot_credit_card_payments'] = $refunded_tot_credit_card_payments;
-	$all_order_data['refunded_tot_debit_card_payments'] = $refunded_tot_debit_card_payments;
-	$all_order_data['refunded_tot_netbanking_payments'] = $refunded_tot_netbanking_payments;
-	$all_order_data['refunded_tot_wallet_payments'] = $refunded_tot_wallet_payments;
-	$all_order_data['refunded_tot_upi_payments'] = $refunded_tot_upi_payments;
+	$auropay_all_order_data['refunded_tot_credit_card_payments'] = $refunded_tot_credit_card_payments;
+	$auropay_all_order_data['refunded_tot_debit_card_payments'] = $refunded_tot_debit_card_payments;
+	$auropay_all_order_data['refunded_tot_netbanking_payments'] = $auropay_refunded_tot_netbanking_payments;
+	$auropay_all_order_data['refunded_tot_wallet_payments'] = $auropay_refunded_tot_wallet_payments;
+	$auropay_all_order_data['refunded_tot_upi_payments'] = $refunded_tot_upi_payments;
 
-	return $all_order_data;
+	return $auropay_all_order_data;
 }
 
 /**
@@ -502,8 +499,8 @@ function auropay_generate_pagination( $num_of_pages, $page_num ) {
 		array(
 			'base' => add_query_arg( 'pagenum', '%#%' ),
 			'format' => '?paged=%#%',
-			'prev_text' => __( '<div class="next-page button"><</div>' ),
-			'next_text' => __( '<div class="next-page button">></div>' ),
+			'prev_text' => __( '<div class="next-page button"><</div>', 'auropay-gateway' ),
+			'next_text' => __( '<div class="next-page button">></div>', 'auropay-gateway' ),
 			'total' => $num_of_pages,
 			'current' => $page_num,
 			'show_all' => false,
@@ -544,10 +541,10 @@ if ( isset( $_POST["Export"] ) ) {
  */
 if ( !function_exists( 'auropay_payment_overview_callback' ) ) {
 	function auropay_payment_overview_callback() {
-		$all_order_data = auropay_get_order_data();
-		$ranges = $all_order_data['ranges'];
-		$range_filter = $all_order_data['range_filter'];
-		$current_range = $all_order_data['current_range'];
+		$auropay_all_order_data = auropay_get_order_data();
+		$ranges = $auropay_all_order_data['ranges'];
+		$range_filter = $auropay_all_order_data['range_filter'];
+		$current_range = $auropay_all_order_data['current_range'];
 		include_once AUROPAY_PLUGIN_PATH . '/includes/view/payment-overview-view.php';
 	}
 }

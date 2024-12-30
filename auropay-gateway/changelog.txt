@@ -1,5 +1,8 @@
 *** Changelog ***
 
+= 2024-12-30 - version 1.0.4
+* Fixed the wordpress submission issues
+
 = 2024-12-13 - version 1.0.3
 * Added the validation for firstname and lastname
 

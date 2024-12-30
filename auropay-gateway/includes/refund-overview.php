@@ -168,8 +168,7 @@ $total_available_to_refund = number_format( (float) $total_available_to_refund, 
 			</table>
 			<hr>
 			<div class="refund-actions">
-				<button type="button" class="button button-primary do-api-refund" id="btnRefundAmount"
-					onclick="auropay_refund_amount()">Refund ₹ <?php echo esc_html( $total_available_to_refund ); ?> via
+				<button type="button" class="button button-primary do-api-refund" id="btnRefundAmount">Refund ₹ <?php echo esc_html( $total_available_to_refund ); ?> via
 					AuroPay
 					Gateway</button>
 				<button type="button" class="button cancel-action" onclick="auropay_cancel_btn()">Cancel</button>
@@ -177,22 +176,3 @@ $total_available_to_refund = number_format( (float) $total_available_to_refund, 
 		</div>
 	</div>
 </div>
-
-<script>
-jQuery('.after-refund').hide()
-
-jQuery("#refund_amount").focusout(function() {
-	let refundValue = jQuery("#refund_amount").val();
-	jQuery('#btnRefundAmount').html("Refund ₹ " + refundValue + " via AuroPay Gateway");
-});
-
-function auropay_refund_btn() {
-	jQuery('.after-refund').show()
-	jQuery('.before-refund').hide()
-}
-
-function auropay_cancel_btn() {
-	jQuery('.after-refund').hide()
-	jQuery('.before-refund').show()
-}
-</script>
