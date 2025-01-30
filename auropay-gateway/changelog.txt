@@ -1,5 +1,8 @@
 *** Changelog ***
 
+= 2025-01-17 - version 1.0.5
+* Fixed the wordpress standard issues
+
 = 2024-12-30 - version 1.0.4
 * Fixed the wordpress submission issues
 

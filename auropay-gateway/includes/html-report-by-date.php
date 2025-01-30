@@ -70,7 +70,7 @@ function auropay_prepare_chart_data( $data, $data_key, $interval, $start_date, $
 function auropay_initialize_day_data( $interval, $start_date ) {
 	$data = array();
 	for ( $i = 0; $i <= $interval; $i++ ) {
-		$time = strtotime( date( 'Ymd', strtotime( "+{$i} DAY", $start_date ) ) ) . '000';
+		$time = strtotime( gmdate( 'Ymd', strtotime( "+{$i} DAY", $start_date ) ) ) . '000';
 		$data[$time] = array( esc_js( $time ), 0 );
 	}
 	return $data;
@@ -78,8 +78,8 @@ function auropay_initialize_day_data( $interval, $start_date ) {
 
 function auropay_initialize_month_data( $interval, $start_date ) {
 	$data = array();
-	$current_yearnum = date( 'Y', $start_date );
-	$current_monthnum = date( 'm', $start_date );
+	$current_yearnum = gmdate( 'Y', $start_date );
+	$current_monthnum = gmdate( 'm', $start_date );
 
 	for ( $i = 0; $i <= $interval; $i++ ) {
 		$time = strtotime( $current_yearnum . str_pad( $current_monthnum, 2, '0', STR_PAD_LEFT ) . '01' ) . '000';
@@ -103,8 +103,8 @@ function auropay_populate_data( &$prepared_data, $data, $data_key, $group_by ) {
 
 		foreach ( $value as $k => $v ) {
 			$time = ( 'day' === $group_by )
-			? strtotime( date( 'Ymd', $k ) ) . '000'
-			: strtotime( date( 'Ym', $k ) . '01' ) . '000';
+			? strtotime( gmdate( 'Ymd', $k ) ) . '000'
+			: strtotime( gmdate( 'Ym', $k ) . '01' ) . '000';
 
 			if ( 'day' === $group_by ) {
 				$prepared_data[$time][1] = $v;
@@ -156,7 +156,7 @@ function auropay_enqueue_report( $current_range, $chart_colours, $barwidth, $cha
 		'report-by-date-js',
 		AUROPAY_PLUGIN_URL . '/assets/js/time-report-by-date.js',
 		array( 'jquery', 'jquery-ui-datepicker' ),
-		null,
+		filemtime( AUROPAY_PLUGIN_PATH . '/assets/js/time-report-by-date.js' ),
 		true
 	);
 

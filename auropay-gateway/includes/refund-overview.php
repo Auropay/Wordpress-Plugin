@@ -13,16 +13,22 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$order_id = sanitize_text_field( $_GET['order_id'] );
-$order_amount = get_post_meta( $order_id, '_amount', true );
-$refund_amount = get_post_meta( $order_id, '_refund_amount', true );
-$order_date = get_post_meta( $order_id, '_auropay_transaction_date', true );
+if ( isset( $_REQUEST['refund_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['refund_nonce'] ) ), 'auropay_refund_nonce' ) ) {
 
-$order_date = date( "M d, Y", strtotime( $order_date ) );
-$order_amount = number_format( (float) $order_amount, 2, '.', '' );
-$refund_amount = number_format( (float) $refund_amount, 2, '.', '' );
-$total_available_to_refund = ( $order_amount - $refund_amount );
-$total_available_to_refund = number_format( (float) $total_available_to_refund, 2, '.', '' );
+	$order_id = isset( $_GET['order_id'] ) ? absint( $_GET['order_id'] ) : 0;
+	$order_amount = get_post_meta( $order_id, '_amount', true );
+	$refund_amount = get_post_meta( $order_id, '_refund_amount', true );
+	$order_date = get_post_meta( $order_id, '_auropay_transaction_date', true );
+
+	$order_date = gmdate( "M d, Y", strtotime( $order_date ) );
+	$order_amount = number_format( (float) $order_amount, 2, '.', '' );
+	$refund_amount = number_format( (float) $refund_amount, 2, '.', '' );
+	$total_available_to_refund = ( $order_amount - $refund_amount );
+	$total_available_to_refund = number_format( (float) $total_available_to_refund, 2, '.', '' );
+} else {
+	// Nonce verification failed, handle the error or display an error message.
+	die( esc_html( __( 'Nonce refund auropay verification failed.', 'auropay-gateway' ) ) );
+}
 ?>
 <div>
 	<div class="before-refund">
@@ -135,6 +141,7 @@ $total_available_to_refund = number_format( (float) $total_available_to_refund, 
 					<th></th>
 				</thead>
 				<tbody>
+					<?php wp_nonce_field( 'auropay_refund_form_action', 'auropay-refund-form-nonce' ); ?>
 					<tr>
 						<td class="label">Amount already refunded:</td>
 						<td class="total"><span>-₹<?php echo esc_html( $refund_amount ); ?></span></td>

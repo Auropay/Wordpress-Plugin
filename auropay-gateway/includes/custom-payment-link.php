@@ -62,17 +62,16 @@ add_action( 'admin_enqueue_scripts', 'auropay_admin_style_js' );
  */
 if ( !function_exists( 'auropay_admin_style_js' ) ) {
 	function auropay_admin_style_js() {
-		wp_enqueue_style( 'auropay_admin_ui_styles', AUROPAY_PLUGIN_URL . '/assets/css/jquery-ui.css' );
-		wp_enqueue_style( 'auropay_admin_styles', AUROPAY_PLUGIN_URL . '/assets/css/style.css' );
-		wp_enqueue_style( 'auropay_bank_icon_styles', AUROPAY_PLUGIN_URL . '/assets/css/bank-icon.css' );
+		wp_enqueue_style( 'auropay_admin_ui_styles', AUROPAY_PLUGIN_URL . '/assets/css/jquery-ui.css', array(), filemtime( AUROPAY_PLUGIN_PATH . '/assets/css/jquery-ui.css' ) );
+		wp_enqueue_style( 'auropay_admin_styles', AUROPAY_PLUGIN_URL . '/assets/css/style.css', array(), filemtime( AUROPAY_PLUGIN_PATH . '/assets/css/style.css' ) );
+		wp_enqueue_style( 'auropay_bank_icon_styles', AUROPAY_PLUGIN_URL . '/assets/css/bank-icon.css', array(), filemtime( AUROPAY_PLUGIN_PATH . '/assets/css/bank-icon.css' ) );
 
 		wp_enqueue_script( 'jquery' );
-		wp_enqueue_script( 'jquery-ui-core', false, array( 'jquery' ), false, true );
-		wp_enqueue_script( 'jquery-ui-datepicker', false, array( 'jquery', 'jquery-ui-core' ), false, true );
-
-		wp_enqueue_script( 'jquery-blockui-js', AUROPAY_PLUGIN_URL . '/assets/js/jquery-blockui/jquery.blockUI.min.js' );
-		wp_enqueue_script( 'flot-js', AUROPAY_PLUGIN_URL . '/assets/js/jquery-flot/jquery.flot.min.js' );
-		wp_enqueue_script( 'flot-time-js', AUROPAY_PLUGIN_URL . '/assets/js/jquery-flot/jquery.flot.time.min.js' );
+		wp_enqueue_script( 'jquery-ui-core' );
+		wp_enqueue_script( 'jquery-ui-datepicker' );
+		wp_enqueue_script( 'jquery-blockui-js', AUROPAY_PLUGIN_URL . '/assets/js/jquery-blockui/jquery.blockUI.min.js', array( 'jquery' ), filemtime( AUROPAY_PLUGIN_PATH . '/assets/js/jquery-blockui/jquery.blockUI.min.js' ), true );
+		wp_enqueue_script( 'flot-js', AUROPAY_PLUGIN_URL . '/assets/js/jquery-flot/jquery.flot.min.js', array( 'jquery' ), filemtime( AUROPAY_PLUGIN_PATH . '/assets/js/jquery-flot/jquery.flot.min.js' ), true );
+		wp_enqueue_script( 'flot-time-js', AUROPAY_PLUGIN_URL . '/assets/js/jquery-flot/jquery.flot.time.min.js', array( 'jquery' ), filemtime( AUROPAY_PLUGIN_PATH . '/assets/js/jquery-flot/jquery.flot.time.min.js' ), true );
 	}
 }
 
@@ -85,50 +84,57 @@ if ( !function_exists( 'auropay_admin_style_js' ) ) {
  */
 if ( !function_exists( 'auropay_calculate_current_range' ) ) {
 	function auropay_calculate_current_range( $current_range ) {
-		global $auropay_start_date;
-		global $auropay_end_date;
+		global $auropay_start_date, $auropay_end_date;
 
 		switch ( $current_range ) {
 			case 'custom':
-				$auropay_start_date = max( strtotime( '-20 years' ), strtotime( sanitize_text_field( $_GET['start_date'] ) ) );
+				// Handle custom date ranges submitted via request
+				if ( isset( $_REQUEST['auropay-date-form-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['auropay-date-form-nonce'] ) ), 'auropay_date_form_action' ) ) {
+					if ( empty( $_GET['start_date'] ) ) {
+						$auropay_start_date = strtotime( 'midnight', current_time( 'timestamp' ) );
+					} else {
+						$auropay_start_date = max( strtotime( '-20 years' ), strtotime( sanitize_text_field( wp_unslash( $_GET['start_date'] ) ) ) );
+					}
+					if ( empty( $_GET['end_date'] ) ) {
+						$auropay_end_date = strtotime( 'midnight', current_time( 'timestamp' ) );
+					} else {
+						$auropay_end_date = strtotime( 'midnight', strtotime( sanitize_text_field( wp_unslash( $_GET['end_date'] ) ) ) );
+					}
 
-				if ( empty( $_GET['end_date'] ) ) {
-					$auropay_end_date = strtotime( 'midnight', current_time( 'timestamp' ) );
-				} else {
-					$auropay_end_date = strtotime( 'midnight', strtotime( sanitize_text_field( $_GET['end_date'] ) ) );
-				}
-				$interval = 0;
-				$min_date = $auropay_start_date;
-
-				// phpcs:ignore WordPress.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
-				while ( ( $min_date = strtotime( '+1 MONTH', $min_date ) ) <= $auropay_end_date ) {
-					$interval++;
-				}
-
-				// 3 months max for day view
-				if ( $interval > 3 ) {
-					$chart_groupby = 'month';
-				} else {
-					$chart_groupby = 'day';
+					// Calculate the interval in months between start and end dates
+					$interval = 0;
+					$min_date = $auropay_start_date;
+					while ( ( $min_date = strtotime( '+1 MONTH', $min_date ) ) <= $auropay_end_date ) {
+						$interval++;
+					}
+					if ( $interval > 3 ) {
+						$chart_groupby = 'month';
+					} else {
+						$chart_groupby = 'day';
+					}
 				}
 				break;
 			case 'year':
-				$auropay_start_date = strtotime( date( 'Y-01-01', current_time( 'timestamp' ) ) );
+				// Set range to the start of the current year to the current date
+				$auropay_start_date = strtotime( gmdate( 'Y-01-01', current_time( 'timestamp' ) ) );
 				$auropay_end_date = strtotime( 'midnight', current_time( 'timestamp' ) );
 				$chart_groupby = 'month';
 				break;
 			case 'last_month':
-				$first_day_current_month = strtotime( date( 'Y-m-01', current_time( 'timestamp' ) ) );
-				$auropay_start_date = strtotime( date( 'Y-m-01', strtotime( '-1 DAY', $first_day_current_month ) ) );
-				$auropay_end_date = strtotime( date( 'Y-m-t', strtotime( '-1 DAY', $first_day_current_month ) ) );
+				// Set range to the previous month
+				$first_day_current_month = strtotime( gmdate( 'Y-m-01', current_time( 'timestamp' ) ) );
+				$auropay_start_date = strtotime( gmdate( 'Y-m-01', strtotime( '-1 DAY', $first_day_current_month ) ) );
+				$auropay_end_date = strtotime( gmdate( 'Y-m-t', strtotime( '-1 DAY', $first_day_current_month ) ) );
 				$chart_groupby = 'day';
 				break;
 			case 'month':
-				$auropay_start_date = strtotime( date( 'Y-m-01', current_time( 'timestamp' ) ) );
+				// Set range to the current month from the 1st to the current date
+				$auropay_start_date = strtotime( gmdate( 'Y-m-01', current_time( 'timestamp' ) ) );
 				$auropay_end_date = strtotime( 'midnight', current_time( 'timestamp' ) );
 				$chart_groupby = 'day';
 				break;
 			case '7day':
+				// Set range to the last 7 days from midnight today
 				$auropay_start_date = strtotime( '-6 days', strtotime( 'midnight', current_time( 'timestamp' ) ) );
 				$auropay_end_date = strtotime( 'midnight', current_time( 'timestamp' ) );
 				$chart_groupby = 'day';
@@ -137,6 +143,7 @@ if ( !function_exists( 'auropay_calculate_current_range' ) ) {
 				break;
 		}
 
+		// Calculate the interval and barwidth based on chart groupby
 		switch ( $chart_groupby ) {
 			case 'day':
 				$barwidth = 60 * 60 * 24 * 1000;
@@ -146,9 +153,7 @@ if ( !function_exists( 'auropay_calculate_current_range' ) ) {
 			case 'month':
 				$barwidth = 60 * 60 * 24 * 7 * 4 * 1000;
 				$interval = 0;
-				$min_date = strtotime( date( 'Y-m-01', $auropay_start_date ) );
-
-				// phpcs:ignore WordPress.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
+				$min_date = strtotime( gmdate( 'Y-m-01', $auropay_start_date ) );
 				while ( ( $min_date = strtotime( '+1 MONTH', $min_date ) ) <= $auropay_end_date ) {
 					$interval++;
 				}
@@ -157,13 +162,16 @@ if ( !function_exists( 'auropay_calculate_current_range' ) ) {
 				break;
 		}
 
-		$auropay_end_date = date( 'd-m-Y', $auropay_end_date ) . " 23:59:59";
-		$dateArr['start_date'] = $auropay_start_date;
-		$dateArr['end_date'] = strtotime( $auropay_end_date );
-		$dateArr['chart_groupby'] = $chart_groupby;
-		$dateArr['barwidth'] = $barwidth;
-		$dateArr['interval'] = $interval;
-		return $dateArr;
+		// Format the end date correctly
+		$auropay_end_date = gmdate( 'd-m-Y', $auropay_end_date ) . " 23:59:59";
+
+		return [
+			'start_date' => $auropay_start_date,
+			'end_date' => strtotime( $auropay_end_date ),
+			'chart_groupby' => $chart_groupby,
+			'barwidth' => $barwidth,
+			'interval' => $interval,
+		];
 	}
 }
 
@@ -182,6 +190,8 @@ function auropay_get_order_data() {
 	global $failed_tot_credit_card_payments, $auropay_failed_tot_debit_card_payments;
 	global $failed_tot_netbanking_payments, $failed_tot_upi_payments, $auropay_failed_tot_wallet_payments;
 	global $order_datas, $total_orders, $num_of_pages, $auropay_dates;
+
+	// Initialize chart data arrays
 	$auropay_chart_datas['sale_amount'] = [];
 	$auropay_chart_datas['refund_amount'] = [];
 	$auropay_chart_datas['failed_amount'] = [];
@@ -189,21 +199,27 @@ function auropay_get_order_data() {
 	list( $page_num, $limit, $order, $link_order, $range, $range_filter, $current_range, $ranges ) = auropay_initialize_settings();
 	$order_data = auropay_get_order_query( $order );
 
+	// Process each order's data
 	foreach ( $order_data as $value ) {
 		$auropay_dates = auropay_calculate_current_range( $range );
 		$transaction_date = get_post_meta( $value->post_id, AUROPAY_TRANSACTION_DATE, true );
 		$order_status = get_post_meta( $value->post_id, '_auropay_order_status', true );
 		$transaction_type = get_post_meta( $value->post_id, '_auropay_transaction_channel_type', true );
 		$order_date = get_post_meta( $value->post_id, AUROPAY_TRANSACTION_DATE, true );
-		$order_date = date( 'd-m-Y', strtotime( $order_date ) );
+		$order_date = gmdate( 'd-m-Y', strtotime( $order_date ) );
 		$order_date = strtotime( $order_date );
 
 		$sale_amount = get_post_meta( $value->post_id, AUROPAY_AMOUNT, true );
 		$sale_amount = number_format( (float) $sale_amount, 2, '.', '' );
 		if ( strtotime( $transaction_date ) >= $auropay_dates['start_date'] && strtotime( $transaction_date ) < $auropay_dates['end_date'] ) {
 			$auropay_total_all_records++;
-			$transaction_status = isset( $_GET['transaction_status'] ) ? sanitize_text_field( $_GET['transaction_status'] ) : '';
+			if ( isset( $_REQUEST['auropay-date-form-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['auropay-date-form-nonce'] ) ), 'auropay_date_form_action' ) ) {
+				$transaction_status = isset( $_GET['transaction_status'] ) ? sanitize_text_field( wp_unslash( $_GET['transaction_status'] ) ) : '';
+			} else {
+				$transaction_status = '';
+			}
 
+			// Handle 'Authorized' orders
 			if ( 'Authorized' == $order_status ) {
 				if ( 'completed' == $transaction_status ) {
 					$order_datas['order_id'][] = $value->post_id;
@@ -310,6 +326,7 @@ function auropay_get_order_data() {
 	( !empty( $auropay_chart_datas['failed_amount'] ) ) ? ksort( $auropay_chart_datas['failed_amount'] ) : $auropay_chart_datas['failed_amount'];
 	( !empty( $auropay_chart_datas['refund_amount'] ) ) ? ksort( $auropay_chart_datas['refund_amount'] ) : $auropay_chart_datas['refund_amount'];
 
+	// Handle sale amounts for each payment type (Credit Card, Debit Card, etc.)
 	$sale_tot_credit_card_payments = number_format( (float) $sale_tot_credit_card_payments, 2, '.', '' );
 	$sale_tot_debit_card_payments = number_format( (float) $sale_tot_debit_card_payments, 2, '.', '' );
 	$auropay_sale_tot_netbanking_payments = number_format( (float) $auropay_sale_tot_netbanking_payments, 2, '.', '' );
@@ -410,17 +427,19 @@ function auropay_get_order_data() {
  * @return array
  */
 function auropay_initialize_settings() {
-	$page_num = isset( $_GET['pagenum'] ) ? absint( $_GET['pagenum'] ) : 1;
-	$limit = 10; // Number of rows in page
-	$order = isset( $_GET['order'] ) ? sanitize_text_field( $_GET['order'] ) : "desc";
+	// Default settings
+	$page_num = 1;
+	$order = 'desc';
+	$limit = 10;
 	$link_order = ( "asc" == $order ) ? "desc" : "asc";
-	$range = isset( $_GET['range'] ) ? sanitize_text_field( $_GET['range'] ) : "7day";
+	$range = isset( $_GET['range'] ) ? sanitize_text_field( wp_unslash( $_GET['range'] ) ) : "7day";
+	$current_range = !empty( $_GET['range'] ) ? sanitize_text_field( wp_unslash( $_GET['range'] ) ) : '7day';
 
-	$current_range = !empty( $_GET['range'] ) ? sanitize_text_field( $_GET['range'] ) : '7day';
-
+	// Validate the current range, if it's invalid, set to '7day'
 	if ( !in_array( $current_range, array( 'custom', 'year', 'last_month', '7day', 'month' ) ) ) {
 		$current_range = '7day';
 	}
+	// Define possible range options
 	$ranges = array(
 		'7day' => __( 'Last 7 Days', 'auropay-gateway' ),
 		'month' => __( 'Day to Month', 'auropay-gateway' ),
@@ -430,13 +449,31 @@ function auropay_initialize_settings() {
 	);
 	$range_filter = "range=" . $range;
 
+	// If the range is 'custom', add custom date parameters to the filter
 	if ( 'custom' == $range ) {
-		$cstart_date = isset( $_GET['start_date'] ) ? sanitize_text_field( $_GET['start_date'] ) : '';
-		$cend_date = isset( $_GET['end_date'] ) ? sanitize_text_field( $_GET['end_date'] ) : '';
+		$cstart_date = '';
+		$cend_date = '';
 		$range_filter .= '&start_date=' . $cstart_date . '&end_date=' . $cend_date;
 	}
 
-	return [$page_num, $limit, $order, $link_order, $range, $range_filter, $current_range, $ranges];
+	// Check if the nonce for the date form is valid and process settings accordingly
+	if ( isset( $_REQUEST['auropay-date-form-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['auropay-date-form-nonce'] ) ), 'auropay_date_form_action' ) ) {
+		$page_num = isset( $_GET['pagenum'] ) ? absint( $_GET['pagenum'] ) : 1;
+		$order = isset( $_GET['order'] ) ? sanitize_text_field( wp_unslash( $_GET['order'] ) ) : "desc";
+		$link_order = ( "asc" == $order ) ? "desc" : "asc";
+		$range = isset( $_GET['range'] ) ? sanitize_text_field( wp_unslash( $_GET['range'] ) ) : "7day";
+		$current_range = !empty( $_GET['range'] ) ? sanitize_text_field( wp_unslash( $_GET['range'] ) ) : '7day';
+
+		if ( 'custom' == $range ) {
+			$cstart_date = isset( $_GET['start_date'] ) ? sanitize_text_field( wp_unslash( $_GET['start_date'] ) ) : '';
+			$cend_date = isset( $_GET['end_date'] ) ? sanitize_text_field( wp_unslash( $_GET['end_date'] ) ) : '';
+			$range_filter .= '&start_date=' . $cstart_date . '&end_date=' . $cend_date;
+		}
+
+		return [$page_num, $limit, $order, $link_order, $range, $range_filter, $current_range, $ranges];
+	} else {
+		return [$page_num, $limit, $order, $link_order, $range, $range_filter, $current_range, $ranges];
+	}
 }
 
 /**
@@ -524,13 +561,30 @@ if ( !function_exists( 'auropay_csv_pdf_export' ) ) {
 		include_once AUROPAY_PLUGIN_PATH . '/includes/export.php';
 		$transaction_data = auropay_get_order_data();
 
-		if ( $transaction_data['order_csv_data'] ) {
-			auropay_export_data( sanitize_text_field( $_POST["export_type"] ), $transaction_data['order_csv_data'] );
+		if ( isset( $_POST['export_type'] ) &&
+			!empty( $_POST['export_type'] ) &&
+			isset( $transaction_data['order_csv_data'] ) &&
+			$transaction_data['order_csv_data'] &&
+			isset( $_REQUEST['auropay-export-form-nonce'] ) &&
+			wp_verify_nonce(
+				sanitize_text_field( wp_unslash( $_REQUEST['auropay-export-form-nonce'] ) ),
+				'auropay_export_form_action'
+			)
+		) {
+			auropay_export_data( sanitize_text_field( wp_unslash( $_POST["export_type"] ) ), $transaction_data['order_csv_data'] );
+
 		}
 	}
 }
 
-if ( isset( $_POST["Export"] ) ) {
+if (
+	isset( $_POST['Export'] ) &&
+	isset( $_REQUEST['auropay-export-form-nonce'] ) &&
+	wp_verify_nonce(
+		sanitize_text_field( wp_unslash( $_REQUEST['auropay-export-form-nonce'] ) ),
+		'auropay_export_form_action'
+	)
+) {
 	auropay_csv_pdf_export();
 }
 

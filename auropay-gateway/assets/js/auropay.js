@@ -148,6 +148,9 @@ function auropay_contact_form() {
 				firstname: firstName,
 				lastname: lastName,
 				auropay_page_id: auropay_page_id,
+				"auropay-checkout-pay-nonce": jQuery(
+					"#auropay-checkout-pay-nonce"
+				).val(),
 			},
 			success: function (result) {
 				jQuery("#close_iframe").show();

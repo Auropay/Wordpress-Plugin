@@ -83,7 +83,7 @@ if ( !class_exists( 'AUROPAY_Payment_Api' ) ) {
 						[
 							'method' => $method,
 							'headers' => $headers,
-							'body' => json_encode( $params ),
+							'body' => wp_json_encode( $params ),
 							'timeout' => 50,
 						]
 					);
@@ -99,8 +99,8 @@ if ( !class_exists( 'AUROPAY_Payment_Api' ) ) {
 				}
 
 				if ( 200 != $response['response']['code'] && 201 != $response['response']['code'] && 204 != $response['response']['code'] ) {
-					AUROPAY_Custom_Log::log( AUROPAY_ORDER_ID . $orderId . '_api_params ' . json_encode( $params ) );
-					AUROPAY_Custom_Log::log( AUROPAY_ORDER_ID . $orderId . '_api_error ' . json_encode( $response['body'] ) );
+					AUROPAY_Custom_Log::log( AUROPAY_ORDER_ID . $orderId . '_api_params ' . wp_json_encode( $params ) );
+					AUROPAY_Custom_Log::log( AUROPAY_ORDER_ID . $orderId . '_api_error ' . wp_json_encode( $response['body'] ) );
 				}
 				AUROPAY_Custom_Log::log( AUROPAY_ORDER_ID . $orderId . '_called_api ' . $api );
 				return $response;

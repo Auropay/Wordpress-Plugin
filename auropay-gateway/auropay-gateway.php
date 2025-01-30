@@ -5,7 +5,7 @@
  * Plugin URI: https://auropay.net/
  * Text Domain: auropay-gateway
  * Description: Custom payment gateway powered by AuroPay.
- * Version: 1.0.4
+ * Version: 1.0.5
  * Requires at least: 5.6
  * Requires PHP: 7.4
  * Author: Akshita Minocha

@@ -3,7 +3,7 @@ Contributors: wordpress,developerspayments12
 Tags: auropay, payment, gateway
 Requires at least: 5.6
 Tested up to: 6.7
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 Requires PHP: 7.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -52,10 +52,13 @@ Yes, it does - production and Test (sandbox) mode is driven by the API keys you 
 = 1.0.4 =
 * switch from 1.0.3 to 1.0.4 Fixed the wordpress submission issues
 
+= 1.0.5 =
+* switch from 1.0.4 to 1.0.5 Fixed the wordpress standard issues
+
 == Upgrade Notice ==
 
-= 1.0.4 =
-* switch from 1.0.3 to 1.0.4 Fixed the wordpress submission issues
+= 1.0.5 =
+* switch from 1.0.4 to 1.0.5 Fixed the wordpress standard issues
 
 
 

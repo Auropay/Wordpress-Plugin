@@ -36,6 +36,12 @@ $arp_status_color = array(
 	'Approved' => '#c6e1c6',
 );
 
+$auropay_refund_nonce = wp_create_nonce( 'auropay_refund_nonce' );
+if ( isset( $_REQUEST['auropay-date-form-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['auropay-date-form-nonce'] ) ), 'auropay_date_form_action' ) ) {
+	$auropay_date_nonce = '&auropay-date-form-nonce=' . sanitize_text_field( wp_unslash( $_REQUEST['auropay-date-form-nonce'] ) );
+} else {
+	$auropay_date_nonce = '&auropay-date-form-nonce=' . wp_create_nonce( 'auropay-date-form-nonce' );
+}
 ?>
 
 <div id="wpwrap" style="width:97%">
@@ -51,7 +57,16 @@ $arp_status_color = array(
 									<?php
 foreach ( $ranges as $range => $name ) {
 	if ( 'Custom' != $name ) {
-		echo '<li class="' . ( $current_range == $range ? 'active' : '' ) . ' odate_range" id="' . esc_attr( $range ) . '"><a href="' . esc_url( remove_query_arg( array( 'start_date', 'end_date' ), add_query_arg( 'range', $range ) ) ) . '">' . esc_html( $name ) . '</a></li>';
+		echo '<li class="' . ( $current_range == $range ? 'active' : '' ) . ' odate_range" id="' . esc_attr( $range ) . '">
+    <a href="' . esc_url(
+			add_query_arg(
+				array(
+					'range' => $range,
+					'auropay-date-form-nonce' => esc_attr( $auropay_date_nonce ),
+				),
+				remove_query_arg( array( 'start_date', 'end_date' ) )
+			)
+		) . '">' . esc_html( $name ) . '</a></li>';
 	} else {
 		echo '<li class="' . ( $current_range == $range ? 'active' : '' ) . ' custom_range" id="custom" ><a href="#" >' . esc_html( $name ) . '</a></li>';
 	}
@@ -59,33 +74,39 @@ foreach ( $ranges as $range => $name ) {
 ?>
 									<li class="custom active" id="custom-box">
 										<form method="GET">
+										<?php wp_nonce_field( 'auropay_date_form_action', 'auropay-date-form-nonce', false, true ); ?>
 											<div>
 												<?php
 
 if ( isset( $_GET['page'] ) ) {
-	echo '<input type="hidden" name="page" value="' . esc_attr( sanitize_text_field( $_GET['page'] ) ) . '" />';
+	echo '<input type="hidden" name="page" value="' . esc_attr( sanitize_text_field( wp_unslash( $_GET['page'] ) ) ) . '" />';
 }
 
 if ( isset( $_GET['orderby'] ) ) {
-	echo '<input type="hidden" name="orderby" value="' . esc_attr( sanitize_text_field( $_GET['orderby'] ) ) . '" />';
+	echo '<input type="hidden" name="orderby" value="' . esc_attr( sanitize_text_field( wp_unslash( $_GET['orderby'] ) ) ) . '" />';
 }
 
 if ( isset( $_GET['order'] ) ) {
-	echo '<input type="hidden" name="order" value="' . esc_attr( sanitize_text_field( $_GET['order'] ) ) . '" />';
+	echo '<input type="hidden" name="order" value="' . esc_attr( sanitize_text_field( wp_unslash( $_GET['order'] ) ) ) . '" />';
 }
 
 if ( isset( $_GET['transaction_status'] ) ) {
-	echo '<input type="hidden" name="transaction_status" value="' . esc_attr( sanitize_text_field( $_GET['transaction_status'] ) ) . '" />';
+	echo '<input type="hidden" name="transaction_status" value="' . esc_attr( sanitize_text_field( wp_unslash( $_GET['transaction_status'] ) ) ) . '" />';
 }
 
 if ( isset( $_GET['range'] ) && !is_array( $_GET['range'] ) ) {
-	echo '<input type="hidden" name="range" value="' . esc_attr( sanitize_text_field( $_GET['range'] ) ) . '" />';
+	echo '<input type="hidden" name="range" value="' . esc_attr( sanitize_text_field( wp_unslash( $_GET['range'] ) ) ) . '" />';
 }
 
 if ( isset( $_GET['range'] ) && is_array( $_GET['range'] ) ) {
 	echo '<input type="hidden" name="range" value="custom" />';
-	echo '<input type="hidden" name="start_date" value="' . esc_attr( sanitize_text_field( $_GET['range']['start_date'] ) ) . '" />';
-	echo '<input type="hidden" name="end_date" value="' . esc_attr( sanitize_text_field( $_GET['range']['end_date'] ) ) . '" />';
+	if ( isset( $_GET['range']['start_date'] ) ) {
+		echo '<input type="hidden" name="start_date" value="' . esc_attr( sanitize_text_field( wp_unslash( $_GET['range']['start_date'] ) ) ) . '" />';
+	}
+
+	if ( isset( $_GET['range']['end_date'] ) ) {
+		echo '<input type="hidden" name="end_date" value="' . esc_attr( sanitize_text_field( wp_unslash( $_GET['range']['end_date'] ) ) ) . '" />';
+	}
 }
 
 ?>
@@ -284,22 +305,22 @@ global $auropay_tot_failed;
 						<div class="trans-dtl-tbl-head"><strong>Transaction Details</strong></div>
 						<ul class="subsubsub">
 							<li class="all"><a
-									href="?page=payment-overview&orderby=post_id&order=desc&transaction_status=all&<?php echo esc_attr( $range_filter ); ?>">All
+									href="?page=payment-overview&orderby=post_id&order=desc&transaction_status=all&<?php echo esc_attr( $range_filter ); ?><?php echo esc_attr( $auropay_date_nonce ); ?>">All
 									<span
 										class="count">(<?php echo esc_html( $auropay_all_order_data['total_all_records'] ); ?>)</span></a>
 								|</li>
 							<li><a
-									href="?page=payment-overview&orderby=post_id&order=desc&transaction_status=completed&<?php echo esc_attr( $range_filter ); ?>">Sales
+									href="?page=payment-overview&orderby=post_id&order=desc&transaction_status=completed&<?php echo esc_attr( $range_filter ); ?><?php echo esc_attr( $auropay_date_nonce ); ?>">Sales
 									<span
 										class="count">(<?php echo esc_html( $auropay_all_order_data['total_completed_records'] ); ?>)</span></a>
 								|</li>
 							<li><a
-									href="?page=payment-overview&orderby=post_id&order=desc&transaction_status=refund&<?php echo esc_attr( $range_filter ); ?>">Refunded
+									href="?page=payment-overview&orderby=post_id&order=desc&transaction_status=refund&<?php echo esc_attr( $range_filter ); ?><?php echo esc_attr( $auropay_date_nonce ); ?>">Refunded
 									<span
 										class="count">(<?php echo esc_html( $auropay_all_order_data['total_refund_records'] ); ?>)</span></a>
 								|</li>
 							<li><a
-									href="?page=payment-overview&orderby=post_id&order=desc&transaction_status=failed&<?php echo esc_attr( $range_filter ); ?>">Failed
+									href="?page=payment-overview&orderby=post_id&order=desc&transaction_status=failed&<?php echo esc_attr( $range_filter ); ?><?php echo esc_attr( $auropay_date_nonce ); ?>">Failed
 									<span
 										class="count">(<?php echo esc_html( $auropay_all_order_data['total_failed_records'] ); ?>)</span></a>
 							</li>
@@ -308,6 +329,7 @@ global $auropay_tot_failed;
 						<div class="export-section">
 							<form class="form-horizontal" action="" enctype="multipart/form-data" method="post"
 								name="upload_excel">
+								<?php wp_nonce_field( 'auropay_export_form_action', 'auropay-export-form-nonce' ); ?>
 								<div class="form-group">
 									<div class="col-md-4 col-md-offset-4" style="cursor:pointer">
 										<select name="export_type" id="export_type" onchange="this.form.submit()">
@@ -405,7 +427,7 @@ if ( !empty( $auropay_all_order_data['order_datas'] ) ) {
 										<td id="row_order_number"
 											class="order_number column-order_number c_order_number has-row-actions column-primary1">
 											<a
-												href="?page=refund-overview&order_id=<?php echo esc_html( $order_id ); ?>"><strong>#<?php echo esc_html( $order_id ); ?>
+												href="?page=refund-overview&order_id=<?php echo esc_html( $order_id ); ?>&refund_nonce=<?php echo esc_attr( $auropay_refund_nonce ); ?>"><strong>#<?php echo esc_html( $order_id ); ?>
 												</strong></a>
 										</td>
 										<td id="row_order_status"

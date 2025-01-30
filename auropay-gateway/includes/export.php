@@ -44,7 +44,7 @@ if ( !class_exists( 'AUROPAY_PDF' ) ) {
 		}
 
 		private function setHeaders() {
-			$date = date( "d-m-y_H:i:s" );
+			$date = gmdate( "d-m-y_H:i:s" );
 			$filename = 'Transaction_List_AuroPay_Payments_' . $date . '.csv';
 			header( 'Content-type: text/csv' );
 			header( "Content-Disposition: attachment; filename={$filename}" );
@@ -200,7 +200,7 @@ function auropay_row_values( $total_result ) {
 
 		$row_values[] = array(
 			$order_id,
-			date( AUROPAY_DATE_FORMAT, strtotime( $transaction_date ) ),
+			gmdate( AUROPAY_DATE_FORMAT, strtotime( $transaction_date ) ),
 			$order_status,
 			$order_amount,
 			$refund_amount,
@@ -231,8 +231,6 @@ function auropay_export_csv( $header, $row_values ) {
 	foreach ( $row_values as $row ) {
 		fputcsv( $fh, $row );
 	}
-
-	fclose( $fh );
 	die();
 }
 
@@ -296,8 +294,6 @@ function auropay_print_pdf_table_rows( $pdf, $row_values, $widths ) {
 		$max_lines = 3; // Maximum number of lines to display before truncating
 
 		$start_x = $pdf->GetX();
-		$start_y = $pdf->GetY();
-
 		$max_cell_height = 30;
 
 		// Check the height needed for wrapped text in the last column
@@ -335,6 +331,6 @@ function auropay_print_pdf_table_rows( $pdf, $row_values, $widths ) {
 }
 
 function auropay_get_filename( $type ) {
-	$date = date( 'd-m-Y_H:i:s', strtotime( date( 'Y-m-d H:i:s' ) . ' + 5 hour + 30 minute' ) );
+	$date = gmdate( 'd-m-Y_H:i:s', strtotime( gmdate( 'Y-m-d H:i:s' ) . ' + 5 hour + 30 minute' ) );
 	return 'Transaction_List_AuroPay_Payments_' . $date . '.' . $type;
 }

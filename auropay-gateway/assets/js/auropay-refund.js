@@ -26,6 +26,9 @@
 						refundAmount: refund_amount,
 						order_id: order_id,
 						reason: refund_reason,
+						"auropay-refund-form-nonce": jQuery(
+							"#auropay-refund-form-nonce"
+						).val(),
 					},
 					cache: false,
 					success: function (result) {
