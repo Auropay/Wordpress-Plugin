@@ -218,7 +218,7 @@ if ( !class_exists( 'AUROPAY_Payment_Api' ) ) {
 				$response_code = $response['response']['code'];
 				if ( in_array( $response_code, array( 200, 201, 204 ) ) ) {
 					$response = json_decode( $response['body'], true );
-					if ( 2 == $response['transactionStatus'] ) {
+					if ( 2 == $response['transactionStatus'] || 18 == $response['transactionStatus'] ) {
 						update_post_meta( $order_id, '_refund_amount', $void_amount );
 						update_post_meta( $order_id, '_refund_reason', $params['Remarks'] );
 						if ( $refund_amount == $order_amount ) {
