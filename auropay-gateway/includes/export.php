@@ -3,7 +3,7 @@
 use Fpdf\Fpdf;
 
 /**
- * An external standard for Auropay.
+ * An external standard for AuroPay.
  *
  * @category Payment
  * @package  AuroPay_Gateway_For_Wordpress
@@ -55,7 +55,7 @@ if ( !class_exists( 'AUROPAY_PDF' ) ) {
 			$this->SetFont( 'Arial', 'B', $header_font_size );
 			$this->SetTextColor( 34, 43, 154 );
 
-			$this->Cell( 0, 10, 'Transaction List Auropay Payments', 0, 0, 'L' );
+			$this->Cell( 0, 10, 'Transaction List AuroPay Payments', 0, 0, 'L' );
 
 			$pageWidth = $this->GetPageWidth();
 			$imageWidth = 90;
@@ -137,11 +137,11 @@ if ( !class_exists( 'AUROPAY_PDF' ) ) {
 			// Position at 1.5 cm from bottom
 			$this->SetY( -25 );
 			$this->SetFont( 'Arial', '', $footer_font_size );
-			$this->Cell( 0, 14, 'Transaction List Auropay Payments', 0, 0, 'L' );
+			$this->Cell( 0, 14, 'Transaction List AuroPay Payments', 0, 0, 'L' );
 			$this->SetX( $this->lMargin );
 			$this->Cell( 0, 14, 'Page ' . $this->PageNo(), 0, 0, 'C' );
 			$this->SetX( $this->lMargin );
-			$this->Cell( 0, 14, 'Powered by Auropay ', 0, 0, 'R' );
+			$this->Cell( 0, 14, 'Powered by AuroPay ', 0, 0, 'R' );
 		}
 	}
 }

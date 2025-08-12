@@ -153,7 +153,7 @@ global $auropay_tot_failed;
 											<strong> Sales</strong>
 										</div>
 										<div class="pymnt-amt clr-grn">
-											<strong><span>₹</span><?php echo esc_html( $auropay_tot_payments ); ?></span></strong>
+											<strong><span><span>₹</span><?php echo esc_html( $auropay_tot_payments ); ?></span></strong>
 										</div>
 									</div>
 								</div>
@@ -166,7 +166,7 @@ global $auropay_tot_failed;
 											<strong>Refund</strong>
 										</div>
 										<div class="pymnt-amt clr-orng">
-											<strong><span><strong><span>₹</span><?php echo esc_html( $auropay_tot_refunded ); ?></span></strong></span></strong>
+											<strong><span><span>₹</span><?php echo esc_html( $auropay_tot_refunded ); ?></span></strong>
 										</div>
 									</div>
 								</div>
@@ -179,7 +179,7 @@ global $auropay_tot_failed;
 											<strong>Failed</strong>
 										</div>
 										<div class="pymnt-amt clr-rd">
-											<strong><span>₹</span><?php echo esc_html( $auropay_tot_failed ); ?></span></strong>
+											<strong><span><span>₹</span><?php echo esc_html( $auropay_tot_failed ); ?></span></strong>
 										</div>
 									</div>
 								</div>
@@ -296,7 +296,7 @@ global $auropay_tot_failed;
 							<br class="clear">
 							<div class="inside">
 								<div class="chart-container chart-view" id="chrt" style="width: 99.5%;">
-									<div class="chart-placeholder main" style="height:300px" id="chart_box"></div>
+									<canvas id="main_chart_canvas"></canvas> 
 								</div>
 							</div>
 						</div>
@@ -364,26 +364,26 @@ global $auropay_tot_failed;
 											</a>
 										</th>
 										<th scope="col" id="order_status"
-											class="manage-column column-order_status  c_order_status sortable">Status
+											class="manage-column c_order_status sortable">Status
 										</th>
 										<th scope="col" id="order_total"
-											class="manage-column column-order_status c_order_total column-primary3 sortable">
+											class="manage-column c_order_total column-primary3 sortable">
 											Sale</th>
 										<th scope="col" id="refund_total"
-											class="manage-column column-order_status c_order_total column-primary3 sortable">
+											class="manage-column c_order_total column-primary3 sortable">
 											Refund</th>
 										<th scope="col" id="order_type"
-											class="manage-column column-order_status1  c_order_type sortable">Type</th>
+											class="manage-column c_order_type sortable">Type</th>
 										<th scope="col" id="order_payment_id"
 											class="manage-column column-order_payment_id  c_order_payment_id sortable">
 											Payment Id</th>
 
 										<th scope="col" id="payment_method"
-											class="manage-column column-order_status2 c_payment_method ">Method</th>
+											class="manage-column c_payment_method ">Method</th>
 										<th scope="col" id="payment_method"
-											class="manage-column column-order_status2 c_card_type ">Payment Detail</th>
+											class="manage-column c_card_type ">Payment Detail</th>
 										<th scope="col" id="auth_code"
-											class="manage-column column-order_status3 c_auth_code ">Auth Code</th>
+											class="manage-column c_auth_code ">Auth Code</th>
 									</tr>
 								</thead>
 								<tbody id="the-list">
@@ -422,53 +422,46 @@ if ( !empty( $auropay_all_order_data['order_datas'] ) ) {
 		}
 
 		?>
-									<tr id="post-<?php echo esc_html( $order_id ); ?>"
-										class="iedit author-self level-0 post-146 type-shop_order post-password-required hentry">
+									<tr id="post-<?php echo esc_html( $order_id ); ?>">
 										<td id="row_order_number"
 											class="order_number column-order_number c_order_number has-row-actions column-primary1">
-											<a
-												href="?page=refund-overview&order_id=<?php echo esc_html( $order_id ); ?>&refund_nonce=<?php echo esc_attr( $auropay_refund_nonce ); ?>"><strong>#<?php echo esc_html( $order_id ); ?>
+											<a href="?page=refund-overview&order_id=<?php echo esc_html( $order_id ); ?>&refund_nonce=<?php echo esc_attr( $auropay_refund_nonce ); ?>"><strong>#<?php echo esc_html( $order_id ); ?>
 												</strong></a>
 										</td>
 										<td id="row_order_status"
-											class="order_status column-order_status1 c_order_status hidden"
-											data-colname="Status"><?php echo esc_html( $order_id ); ?></td>
+											class="order_status c_order_status hidden"><?php echo esc_html( $order_id ); ?></td>
 										<td id="row_order_date" class="order_date column-order_date c_order_date">
 											<?php echo esc_html( $transaction_date ); ?></td>
 										<td id="row_order_status"
-											class="order_status column-order_status1 c_order_status"
-											data-colname="Status">
+											class="order_status c_order_status">
 											<span><mark class="order-status tips"
 													style="background:<?php echo esc_html( $arp_status_color[$order_status] ); ?>"><span><?php echo esc_html( ucfirst( $order_status ) ); ?></span></mark>
 											</span>
 										</td>
-										<td id="row_order_total" class="order_total column-order_status c_order_total">
+										<td id="row_order_total" class="order_total c_order_total">
 											₹<?php echo esc_html( $order_amount ) ?></td>
 										<td id="row_refund_amount"
-											class="refund_amount column-order_status c_refund_amount"
+											class="refund_amount c_refund_amount"
 											<?php echo esc_html( $color_code ); ?>>
 											<?php echo esc_html( $refund_amount ); ?>
 										</td>
-										<td id="row_order_type" class="order_status column-order_status1 c_order_type">
+										<td id="row_order_type" class="order_status c_order_type">
 											<span><?php echo esc_html( $type ); ?></span>
 										</td>
 										<td id="row_order_payment_id"
-											class="order_payment column-order_status1 c_order_payment_id">
+											class="order_payment c_order_payment_id">
 											<span><?php echo esc_html( $paymentId ); ?></span>
 										</td>
 										<td id="row_payment_method"
-											class="order_status column-order_status2 c_payment_method"
-											data-colname="Status2">
+											class="order_status c_payment_method">
 											<span><?php echo esc_html( $payment_method ); ?></span>
 										</td>
 
-										<td id="row_payment_method"
-											class="order_status column-order_status2 c_card_type"
-											data-colname="Status2">
+										<td id="row_card_type"
+											class="order_status c_card_type">
 											<span><?php echo esc_html( $card_type ); ?></span>
 										</td>
-										<td id="row_auth_code" class="order_date column-order_status2 c_auth_code"
-											data-colname="Status2">
+										<td id="row_auth_code" class="order_date c_auth_code">
 											<span><?php echo esc_html( $auth_code ); ?></span>
 										</td>
 									</tr>

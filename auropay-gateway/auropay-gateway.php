@@ -1,17 +1,17 @@
 <?php
 
 /**
- * Plugin Name: Auropay Gateway
+ * Plugin Name: AuroPay Gateway
  * Plugin URI: https://auropay.net/
  * Text Domain: auropay-gateway
  * Description: Custom payment gateway powered by AuroPay.
- * Version: 1.0.5
+ * Version: 1.0.6
  * Requires at least: 5.6
  * Requires PHP: 7.4
  * Author: Akshita Minocha
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
- * Tested up to: 6.7
+ * Tested up to: 6.8
  *
  * @package  Auropay_Gateway
  * @link     https://auropay.net/
@@ -25,7 +25,7 @@ define( 'AUROPAY_MAIN_FILE', __FILE__ );
 define( 'AUROPAY_PLUGIN_URL', untrailingslashit( plugins_url( basename( plugin_dir_path( __FILE__ ) ), basename( __FILE__ ) ) ) );
 define( 'AUROPAY_PLUGIN_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
 define( 'AUROPAY_ACCESS_KEY', 'cGF5bWVudCBnYXRld2F5MDA5=dfsdfsdfdsfsdf432423423434+sfjejd9' );
-define( 'AUROPAY_PLUGIN_NAME', 'Auropay Gateway' );
+define( 'AUROPAY_PLUGIN_NAME', 'AuroPay Gateway' );
 define( 'AUROPAY_TIMEZONE', 'Asia/Kolkata' );
 define( 'AUROPAY_ORDER_STATUS', '_auropay_order_status' );
 define( 'AUROPAY_ORDER_ID', 'orderid' );
@@ -64,7 +64,7 @@ require_once plugin_dir_path( __FILE__ ) . '/auropay-cron/auropay-sync-order-sta
 
 add_action( 'admin_menu', 'auropay_register_custom_submenu' );
 /**
- * This sets Wordpress timeout to 30 seconds to counter Curl timeout error
+ * This sets WordPress timeout to 30 seconds to counter Curl timeout error
  *
  * @return void
  */

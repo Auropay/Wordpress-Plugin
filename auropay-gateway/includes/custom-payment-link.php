@@ -1,7 +1,7 @@
 <?php
 
 /**
- * An external standard for Auropay.
+ * An external standard for AuroPay.
  *
  * @category Payment
  * @package  AuroPay_Gateway_For_Wordpress
@@ -70,8 +70,13 @@ if ( !function_exists( 'auropay_admin_style_js' ) ) {
 		wp_enqueue_script( 'jquery-ui-core' );
 		wp_enqueue_script( 'jquery-ui-datepicker' );
 		wp_enqueue_script( 'jquery-blockui-js', AUROPAY_PLUGIN_URL . '/assets/js/jquery-blockui/jquery.blockUI.min.js', array( 'jquery' ), filemtime( AUROPAY_PLUGIN_PATH . '/assets/js/jquery-blockui/jquery.blockUI.min.js' ), true );
-		wp_enqueue_script( 'flot-js', AUROPAY_PLUGIN_URL . '/assets/js/jquery-flot/jquery.flot.min.js', array( 'jquery' ), filemtime( AUROPAY_PLUGIN_PATH . '/assets/js/jquery-flot/jquery.flot.min.js' ), true );
-		wp_enqueue_script( 'flot-time-js', AUROPAY_PLUGIN_URL . '/assets/js/jquery-flot/jquery.flot.time.min.js', array( 'jquery' ), filemtime( AUROPAY_PLUGIN_PATH . '/assets/js/jquery-flot/jquery.flot.time.min.js' ), true );
+		wp_enqueue_script(
+			'charts-js',
+			AUROPAY_PLUGIN_URL . '/assets/js/jquery-chart/chart.js',
+			array('jquery'),
+			filemtime(AUROPAY_PLUGIN_PATH . '/assets/js/jquery-chart/chart.js'),
+			true
+		);
 	}
 }
 

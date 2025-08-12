@@ -1,7 +1,7 @@
 <?php
 
 /**
- * An external standard for Auropay.
+ * An external standard for AuroPay.
  *
  * @category Payment
  * @package  AuroPay_Gateway_For_Wordpress
@@ -14,7 +14,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Communicates with auropay payment API
+ * Communicates with AuroPay payment API
  *
  * @category Payment
  * @package  AuroPay_Gateway_For_Wordpress
@@ -111,7 +111,7 @@ if ( !class_exists( 'AUROPAY_Payment_Api' ) ) {
 		}
 
 		/**
-		 * Used to get Auropay payment form link
+		 * Used to get AuroPay payment form link
 		 *
 		 * @param array $params parameters
 		 *
@@ -137,7 +137,7 @@ if ( !class_exists( 'AUROPAY_Payment_Api' ) ) {
 		}
 
 		/**
-		 * Used to get Auropay transaction status
+		 * Used to get AuroPay transaction status
 		 *
 		 * @param string $transaction_id transaction id
 		 * @param string $order_id       order id
@@ -221,7 +221,7 @@ if ( !class_exists( 'AUROPAY_Payment_Api' ) ) {
 					if ( 2 == $response['transactionStatus'] || 18 == $response['transactionStatus'] ) {
 						update_post_meta( $order_id, '_refund_amount', $void_amount );
 						update_post_meta( $order_id, '_refund_reason', $params['Remarks'] );
-						if ( $refund_amount == $order_amount ) {
+						if ( $void_amount == $order_amount ) {
 							update_post_meta( $order_id, '_auropay_order_status', 'Refunded' );
 						}
 						return true;
@@ -235,7 +235,7 @@ if ( !class_exists( 'AUROPAY_Payment_Api' ) ) {
 		}
 
 		/**
-		 * Used to get Auropay transaction order status
+		 * Used to get AuroPay transaction order status
 		 *
 		 * @param int $referenceNo reference number of order
 		 *

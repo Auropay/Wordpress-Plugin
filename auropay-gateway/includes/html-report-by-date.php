@@ -1,7 +1,7 @@
 <?php
 
 /**
- * An external standard for Auropay.
+ * An external standard for AuroPay.
  *
  * @category Payment
  * @package  AuroPay_Gateway_For_Wordpress
@@ -29,7 +29,7 @@ $allChartData = $auropay_all_order_data['chart_datas'];
 
 //configure color of chart
 $chart_colours = array(
-	'sales_amount' => 'green',
+	'sales_color' => 'green',
 	'net_sales_amount' => '#3498db',
 	'average' => '#b1d4ea',
 	'net_average' => '#3498db',
@@ -37,8 +37,8 @@ $chart_colours = array(
 	'item_count' => '#ecf0f1',
 	'shipping_amount' => '#5cc488',
 	'coupon_amount' => '#f1c40f',
-	'refund_amount' => 'orange',
-	'failed_amount' => 'red',
+	'refund_color' => 'orange',
+	'failed_color' => 'red',
 );
 
 /**
@@ -70,8 +70,8 @@ function auropay_prepare_chart_data( $data, $data_key, $interval, $start_date, $
 function auropay_initialize_day_data( $interval, $start_date ) {
 	$data = array();
 	for ( $i = 0; $i <= $interval; $i++ ) {
-		$time = strtotime( gmdate( 'Ymd', strtotime( "+{$i} DAY", $start_date ) ) ) . '000';
-		$data[$time] = array( esc_js( $time ), 0 );
+		$time = strtotime( gmdate( 'Ymd', strtotime( "+{$i} DAY", $start_date ) ) ) * 1000;
+		$data[$time] = array( $time , 0 );
 	}
 	return $data;
 }
@@ -82,8 +82,8 @@ function auropay_initialize_month_data( $interval, $start_date ) {
 	$current_monthnum = gmdate( 'm', $start_date );
 
 	for ( $i = 0; $i <= $interval; $i++ ) {
-		$time = strtotime( $current_yearnum . str_pad( $current_monthnum, 2, '0', STR_PAD_LEFT ) . '01' ) . '000';
-		$data[$time] = array( esc_js( $time ), 0 );
+		$time = strtotime( $current_yearnum . str_pad( $current_monthnum, 2, '0', STR_PAD_LEFT ) . '01' ) * 1000;
+		$data[$time] = array( $time , 0 );
 
 		$current_monthnum++;
 
@@ -103,8 +103,8 @@ function auropay_populate_data( &$prepared_data, $data, $data_key, $group_by ) {
 
 		foreach ( $value as $k => $v ) {
 			$time = ( 'day' === $group_by )
-			? strtotime( gmdate( 'Ymd', $k ) ) . '000'
-			: strtotime( gmdate( 'Ym', $k ) . '01' ) . '000';
+			? strtotime( gmdate( 'Ymd', $k ) ) * 1000
+			: strtotime( gmdate( 'Ym', $k ) . '01' ) * 1000;
 
 			if ( 'day' === $group_by ) {
 				$prepared_data[$time][1] = $v;
@@ -166,8 +166,8 @@ function auropay_enqueue_report( $current_range, $chart_colours, $barwidth, $cha
 		'chart_colours' => $chart_colours,
 		'barwidth' => $barwidth,
 		'chart_groupby' => $chart_groupby,
-		'chart_data' => rawurlencode( $chart_data ),
-		'jsonMonthAbbrev' => rawurlencode( $jsonMonthAbbrev ),
+		'chart_data' => json_decode( $chart_data ),
+		'jsonMonthAbbrev' => $jsonMonthAbbrev,
 		'gross_sale_amount' => __( 'Gross sales amount', 'auropay-gateway' ),
 		'refund_amount' => __( 'Refund amount', 'auropay-gateway' ),
 		'failed_amount' => __( 'Failed amount', 'auropay-gateway' ),

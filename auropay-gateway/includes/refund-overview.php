@@ -1,7 +1,7 @@
 <?php
 
 /**
- * An external standard for Auropay.
+ * An external standard for AuroPay.
  *
  * @category Payment
  * @package  AuroPay_Gateway_For_Wordpress

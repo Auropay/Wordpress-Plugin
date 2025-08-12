@@ -24,8 +24,8 @@ define( 'AUROPAY_SETTING_SECTION', 'auropay_setting_section' );
 if ( !function_exists( 'auropay_settings' ) ) {
 	function auropay_settings() {
 		add_menu_page(
-			__( 'Auropay Settingss', 'auropay-gateway' ),
-			__( 'Auropay Settings', 'auropay-gateway' ),
+			__( 'AuroPay Settingss', 'auropay-gateway' ),
+			__( 'AuroPay Settings', 'auropay-gateway' ),
 			'manage_options',
 			'auropay-settings',
 			'auropay_settings_callback',
@@ -73,7 +73,7 @@ if ( !function_exists( 'auropay_settings_init' ) ) {
 		// Setup settings section
 		add_settings_section(
 			AUROPAY_SETTING_SECTION,
-			'Auropay Settings',
+			'AuroPay Settings',
 			'',
 			AUROPAY_SETTING_PAGE
 		);

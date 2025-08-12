@@ -1,7 +1,7 @@
 <?php
 
 /**
- * An external standard for Auropay.
+ * An external standard for AuroPay.
  *
  * @package AuroPay_Gateway_For_WooCommerce
  * @link    https://auropay.net/

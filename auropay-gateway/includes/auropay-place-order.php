@@ -1,7 +1,7 @@
 <?php
 
 /**
- * An external standard for Auropay.
+ * An external standard for AuroPay.
  *
  * @category Payment
  * @package  AuroPay_Gateway_For_Wordpress
@@ -24,9 +24,45 @@ if ( !function_exists( 'auropay_checkout' ) ) {
 		$auropay_page_id = get_the_ID();
 		$button_text = get_option( 'auropay_button_text' );
 		$image_url = AUROPAY_PLUGIN_URL . '/assets/images/creating-your-order.gif';
-		wp_nonce_field( 'auropay_checkout_pay_form_action', 'auropay-checkout-pay-nonce' );
-		return '<input id="auropay_page_id" type="hidden" value="' . $auropay_page_id . '"><div class="pay-now-div"><div class="form-div" style="display:none"><form role="form" id="checkout-auropay-form"> <h2>Checkout </h2><div class="form-group"> <label for="firstname">Firstname</label> <input type="text" class="form-control" id="firstname" placeholder="Enter your firstname"/> <span id="errMsgFirstname" class="errorMsg"></span> </div><div class="form-group"> <label for="lastname">Lastname</label> <input type="text" class="form-control" id="lastname" placeholder="Enter your lastname"/> <span id="errMsgLastname" class="errorMsg"></span> </div><div class="form-group"> <label for="phone">Phone Number</label> <input type="tel" maxlength="10" class="form-control" id="phone" placeholder="Enter your phone number"/> <span id="errMsgPhone" class="errorMsg"></span> </div><div class="form-group"> <label for="email">Email</label> <input type="email" class="form-control" id="email" maxlength="77" placeholder="Enter your email"/> <span id="errMsgEmail" class="errorMsg"></span> </div><div class="form-group"> <label for="amount">Amount</label> <input type="text" class="form-control" id="amount" placeholder="Enter the amount"/> <span id="errMsgAmount" class="errorMsg"></span> </div><button type="button" class="btn btn-primary submitBtn" onClick="auropay_contact_form()">SUBMIT</button> </form> <div class="timeline-event" id="c_step1" style="display:block;" align="center"> <div class="timeline-event-content"> <div class="timeline-event-title"> <img src="' . esc_url( $image_url ) . '"  alt="Creating your order" width="400" height="200"/> <br/> </div><div class="timeline-event-description"> <p style="color:#0000ff;">Hey! <br/> We are creating your order</p></div></div></div></div><br><input type="button"  class="auropay-place-order-btn button button-primary alt" name="auropay_place_order" id="auropay_place_order" value="' . $button_text . '" data-value="Pay Now" onClick="auropay_pay_now()" class="btn btn-success btn-lg" data-toggle="modal" />
-        </div> <div class="payment-msg"></div>';
+		return '<input id="auropay_page_id" type="hidden" value="' . $auropay_page_id . '" />
+			<div class="pay-now-div">
+				<div class="form-div" style="display: none;">
+					<form role="form" id="checkout-auropay-form">
+						' . wp_nonce_field('auropay_checkout_pay_form_action', 'auropay-checkout-pay-nonce', true, false) . '
+						<h2>Checkout</h2>
+						<div class="form-group"><label for="firstname">First Name</label> <input type="text" class="form-control" id="firstname" placeholder="Enter your first name" /> <span id="errMsgFirstname" class="errorMsg"></span></div>
+						<div class="form-group"><label for="lastname">Last Name</label> <input type="text" class="form-control" id="lastname" placeholder="Enter your last name" /> <span id="errMsgLastname" class="errorMsg"></span></div>
+						<div class="form-group"><label for="phone">Phone Number</label> <input type="tel" maxlength="10" class="form-control" id="phone" placeholder="Enter your phone number" /> <span id="errMsgPhone" class="errorMsg"></span></div>
+						<div class="form-group"><label for="email">Email</label> <input type="email" class="form-control" id="email" maxlength="77" placeholder="Enter your email" /> <span id="errMsgEmail" class="errorMsg"></span></div>
+						<div class="form-group"><label for="amount">Amount</label> <input type="text" class="form-control" id="amount" placeholder="Enter the amount" /> <span id="errMsgAmount" class="errorMsg"></span></div>
+						<button type="button" class="btn btn-primary submitBtn" onClick="auropay_contact_form()">Submit</button>
+					</form>
+					<div class="timeline-event" id="c_step1" style="display: block;" align="center">
+						<div class="timeline-event-content">
+							<div class="timeline-event-title"><img src="' . esc_url($image_url) . '" alt="Creating your order" width="400" height="200" /> <br /></div>
+							<div class="timeline-event-description">
+								<p style="color: #0000ff;">
+									Hey! <br />
+									We are creating your order
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<br />
+				<input
+					type="button"
+					class="auropay-place-order-btn button button-primary alt"
+					name="auropay_place_order"
+					id="auropay_place_order"
+					value="' . $button_text . '"
+					data-value="Pay Now"
+					onClick="auropay_pay_now()"
+					class="btn btn-success btn-lg"
+					data-toggle="modal"
+				/>
+			</div>
+			<div class="payment-msg"></div>';
 	}
 }
 
@@ -111,7 +147,7 @@ if ( !function_exists( 'auropay_payment_link_params' ) ) {
 			"customers" => $customer_array,
 			"responseType" => 1,
 			"source" => 'ecommerce',
-			"platform" => 'wordpress',
+			"platform" => 'WordPress',
 			"callbackParameters" => array(
 				"ReferenceNo" => $refNo,
 				"ReferenceType" => "AuropayOrder",
@@ -125,8 +161,8 @@ if ( !function_exists( 'auropay_payment_link_params' ) ) {
 	}
 }
 
-add_action( 'wp_ajax_ajax_orders', 'auropay_ajax_order_data' );
-add_action( 'wp_ajax_nopriv_ajax_orders', 'auropay_ajax_order_data' );
+add_action( 'wp_ajax_auropay_orders', 'auropay_order_data' );
+add_action( 'wp_ajax_nopriv_auropay_orders', 'auropay_order_data' );
 add_action( 'wp_enqueue_scripts', 'auropay_add_style' );
 /**
  * Includes the styles
@@ -147,17 +183,29 @@ if ( !function_exists( 'auropay_add_style' ) ) {
  *
  * @return string
  */
-if ( !function_exists( 'auropay_ajax_order_data' ) ) {
-	function auropay_ajax_order_data() {
+if ( !function_exists( 'auropay_order_data' ) ) {
+	function auropay_order_data() {
+		// Validate nonce first
+		if (
+			! isset( $_POST['auropay-checkout-pay-nonce'] ) ||
+			! wp_verify_nonce(
+				sanitize_text_field( wp_unslash( $_POST['auropay-checkout-pay-nonce'] ) ),
+				'auropay_checkout_pay_form_action'
+			)
+		) {
+			wp_send_json_error( [ 'error_message' => 'Invalid nonce. Please refresh the page and try again.' ], 403 );
+			wp_die();
+		}
+
 		// Check the request data is set or not
-		if ( isset( $_POST['order_action'] ) && 'place_order' == $_POST['order_action'] && isset( $_POST['auropay-checkout-pay-nonce'] ) &&
-			wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['auropay-checkout-pay-nonce'] ) ), 'auropay_checkout_pay_form_action' ) ) {
+		if ( isset( $_POST['order_action'] ) && 'place_order' == $_POST['order_action'] ) {
 
 			// Retrieve and sanitize input data
 			$order_id = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : 0;
 			$email = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
 			$phoneNumber = isset( $_POST['phoneNumber'] ) ? sanitize_text_field( wp_unslash( $_POST['phoneNumber'] ) ) : '';
-			$amount = isset( $_POST['amount'] ) ? floatval( $_POST['amount'] ) : 0;
+			$encrypted_amount = isset( $_POST['amount'] ) ? sanitize_text_field( wp_unslash( $_POST['amount'] ) ) : '';
+			$amount = floatval( base64_decode( $encrypted_amount ) );
 			$firstname = isset( $_POST['firstname'] ) ? sanitize_text_field( wp_unslash( $_POST['firstname'] ) ) : '';
 			$lastname = isset( $_POST['lastname'] ) ? sanitize_text_field( wp_unslash( $_POST['lastname'] ) ) : '';
 			$auropay_page_id = isset( $_POST['auropay_page_id'] ) ? sanitize_text_field( wp_unslash( $_POST['auropay_page_id'] ) ) : '';
@@ -184,11 +232,11 @@ if ( !function_exists( 'auropay_ajax_order_data' ) ) {
 				update_post_meta( $order_id, '_auropay_payment_link', $response['paymentLink'] );
 				update_post_meta( $order_id, '_auropay_payment_link_id', $response['id'] );
 				echo wp_json_encode( ['paymentLink' => $response['paymentLink']], JSON_PRETTY_PRINT );
-				die();
 			}
-			exit;
+		}else {
+			wp_send_json_error( [ 'error_message' => 'Invalid action.' ], 400 );
 		}
-		die();
+		wp_die();
 	}
 }
 
@@ -202,8 +250,8 @@ function auropay_update_order_metadata( $order_id, $email, $phoneNumber, $amount
 	update_post_meta( $order_id, '_amount', $amount );
 }
 
-add_action( 'wp_ajax_ajax_refund_order', 'auropay_refund_order' );
-add_action( 'wp_ajax_nopriv_ajax_refund_order', 'auropay_refund_order' );
+add_action( 'wp_ajax_auropay_refund_order', 'auropay_refund_order' );
+add_action( 'wp_ajax_nopriv_auropay_refund_order', 'auropay_refund_order' );
 add_action( 'admin_footer', 'auropay_refund_js' );
 
 /**
@@ -211,36 +259,39 @@ add_action( 'admin_footer', 'auropay_refund_js' );
  *
  * @return string
  */
-if ( !function_exists( 'auropay_refund_order' ) ) {
-	function auropay_refund_order() {
-		// Check the request data is set or not
-		if ( isset( $_POST['refund_action'] ) && 'refund_order' == $_POST['refund_action'] ) {
-			if ( isset( $_POST['auropay-refund-form-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['auropay-refund-form-nonce'] ) ), 'auropay_refund_form_action' ) ) {
-				// Retrieve and sanitize input data
-				$refundAmount = isset( $_POST['refundAmount'] ) ? floatval( $_POST['refundAmount'] ) : 0;
-				$order_id = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : 0;
-				$sanitisedReason = isset( $_POST['reason'] ) ? sanitize_text_field( wp_unslash( $_POST['reason'] ) ) : '';
-				if ( '' == $_POST['reason'] ) {
-					$reason = "Refund for order " . $order_id;
-				} else {
-					$reason = $sanitisedReason;
-				}
+if (!function_exists('auropay_refund_order')) {
+	function auropay_refund_order()
+	{
+		if (isset($_POST['auropay-refund-form-nonce']) && ! wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['auropay-refund-form-nonce'])), 'auropay_refund_form_action')) {
+			wp_send_json_error(__('Nonce refund auropay verification failed.', 'auropay-gateway'));
+		}
 
-				//Request parameters for refund
-				$params = array(
-					"UserType" => 1,
-					"Amount" => $refundAmount,
-					"Remarks" => $reason,
-				);
+		if (!current_user_can('edit_posts')) {
+			wp_send_json_error('Permission denied.');
+		}
 
-				// Handle the response
-				$response = AUROPAY_Payment_Api::auropay_process_refund( $params, $order_id );
-				echo wp_json_encode( $response, JSON_PRETTY_PRINT );
-				die();
+		if (isset($_POST['refund_action']) && 'refund_order' == $_POST['refund_action']) {
+			// Retrieve and sanitize input data
+			$refundAmount = isset($_POST['refundAmount']) ? floatval($_POST['refundAmount']) : 0;
+			$order_id = isset($_POST['order_id']) ? absint($_POST['order_id']) : 0;
+			$sanitisedReason = isset($_POST['reason']) ? sanitize_text_field(wp_unslash($_POST['reason'])) : '';
+			if ('' == $_POST['reason']) {
+				$reason = "Refund for order " . $order_id;
 			} else {
-				// Nonce verification failed, handle the error or display an error message.
-				die( esc_html( __( 'Nonce refund auropay verification failed.', 'auropay-gateway' ) ) );
+				$reason = $sanitisedReason;
 			}
+
+			//Request parameters for refund
+			$params = array(
+				"UserType" => 1,
+				"Amount" => $refundAmount,
+				"Remarks" => $reason,
+			);
+
+			// Handle the response
+			$response = AUROPAY_Payment_Api::auropay_process_refund($params, $order_id);
+			echo wp_json_encode($response, JSON_PRETTY_PRINT);
+			die();
 		}
 	}
 }
@@ -261,6 +312,7 @@ if ( !function_exists( 'auropay_refund_js' ) ) {
 				wp_localize_script( 'auropay-refund-js', 'auropayRefundData', array(
 					'ajax_url' => admin_url( 'admin-ajax.php' ),
 					'order_id' => $order_id,
+					'refund_sec_nonce' => wp_create_nonce('auropay_refund_form_action'),
 					'confirm_text' => __( 'Are you sure you wish to process this refund? This action cannot be undone.', 'auropay-gateway' ),
 					'error_empty' => __( 'Please enter an amount.', 'auropay-gateway' ),
 					'error_invalid' => __( 'Invalid refund amount entered.', 'auropay-gateway' ),
@@ -292,6 +344,7 @@ function auropay_enqueue_scripts() {
 		'EXPIRY' => get_option( 'auropay_expiry' ),
 		'AUROPAY_PLUGIN_URL' => esc_url( AUROPAY_PLUGIN_URL ),
 		'AJAX_URL' => admin_url( 'admin-ajax.php' ),
+		'NONCE' => wp_create_nonce('auropay_checkout_pay_form_action'),
 	) );
 }
 add_action( 'wp_enqueue_scripts', 'auropay_enqueue_scripts' );

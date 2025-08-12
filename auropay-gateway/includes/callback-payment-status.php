@@ -1,7 +1,7 @@
 <?php
 
 /**
- * An external standard for Auropay.
+ * An external standard for AuroPay.
  *
  * @category Payment
  * @package  AuroPay_Gateway_For_Wordpress
@@ -28,7 +28,7 @@ function auropay_callback() {
 			$status = AUROPAY_Payment_Api::auropay_get_payment_status( $transaction_id, $order_id );
 			if ( "Authorized" === $status ) {
 				update_post_meta( $order_id, AUROPAY_ORDER_STATUS, $status );
-				$status_message = __( 'Payment was successfully processed by Auropay Payments', 'auropay-gateway' );
+				$status_message = __( 'Payment was successfully processed by AuroPay Payments', 'auropay-gateway' );
 			} else {
 				if ( 'Fail' != $status ) {
 					update_post_meta( $order_id, AUROPAY_ORDER_STATUS, $status );

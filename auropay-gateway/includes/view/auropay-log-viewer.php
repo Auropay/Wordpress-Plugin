@@ -21,7 +21,7 @@ if ( file_exists( $arpLogFile ) ) {
 
 			// Check if the log entry date is within the last 5 days
 			if ( $log_date >= $fiveDaysAgo ) {
-				echo '<pre>' . esc_html( $logEntry, 'auropay-gateway' ) . '</pre>';
+				echo '<pre>' . esc_html__( $logEntry, 'auropay-gateway' ) . '</pre>';
 			}
 		}
 	}

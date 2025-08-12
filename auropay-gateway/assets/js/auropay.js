@@ -69,19 +69,19 @@ function auropay_contact_form() {
 	jQuery("#errMsgEmail").html("");
 	jQuery("#errMsgAmount").html("");
 	if (firstName.trim() == "") {
-		jQuery("#errMsgFirstname").html("Please enter firstname.");
+		jQuery("#errMsgFirstname").html("Please enter first name.");
 		jQuery("#firstname").focus();
 		return false;
 	} else if (firstName.trim() != "" && !name_regex.test(firstName)) {
-		jQuery("#errMsgFirstname").html("Please enter valid firstname.");
+		jQuery("#errMsgFirstname").html("Please enter valid first name.");
 		jQuery("#firstname").focus();
 		return false;
 	} else if (lastName.trim() == "") {
-		jQuery("#errMsgLastname").html("Please enter lastname.");
+		jQuery("#errMsgLastname").html("Please enter last name.");
 		jQuery("#lastname").focus();
 		return false;
 	} else if (lastName.trim() != "" && !name_regex.test(lastName)) {
-		jQuery("#errMsgLastname").html("Please enter valid lastname.");
+		jQuery("#errMsgLastname").html("Please enter valid last name.");
 		jQuery("#lastname").focus();
 		return false;
 	} else if (phoneNumber.trim() == "") {
@@ -131,7 +131,7 @@ function auropay_contact_form() {
 		return false;
 	} else {
 		jQuery("#c_step1").css("display", "block");
-
+		var amountEncoded = btoa(amount)
 		// AJAX call
 		jQuery.ajax({
 			type: "POST",
@@ -139,18 +139,16 @@ function auropay_contact_form() {
 			dataType: "json",
 			cache: false,
 			data: {
-				action: "ajax_orders",
+				action: "auropay_orders",
 				order_id: orderId,
 				order_action: "place_order",
 				email: email,
 				phoneNumber: phoneNumber,
-				amount: amount,
+				amount: amountEncoded,
 				firstname: firstName,
 				lastname: lastName,
 				auropay_page_id: auropay_page_id,
-				"auropay-checkout-pay-nonce": jQuery(
-					"#auropay-checkout-pay-nonce"
-				).val(),
+				"auropay-checkout-pay-nonce": AUROPAY.NONCE,
 			},
 			success: function (result) {
 				jQuery("#close_iframe").show();

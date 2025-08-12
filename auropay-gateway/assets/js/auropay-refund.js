@@ -21,14 +21,12 @@
 					url: auropayRefundData.ajax_url,
 					dataType: "json",
 					data: {
-						action: "ajax_refund_order",
+						action: "auropay_refund_order",
 						refund_action: "refund_order",
 						refundAmount: refund_amount,
 						order_id: order_id,
 						reason: refund_reason,
-						"auropay-refund-form-nonce": jQuery(
-							"#auropay-refund-form-nonce"
-						).val(),
+						"auropay-refund-form-nonce": auropayRefundData.refund_sec_nonce,
 					},
 					cache: false,
 					success: function (result) {
