@@ -13,7 +13,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-add_shortcode( 'AURP', 'auropay_checkout' );
+add_shortcode( 'AUROPAY', 'auropay_checkout' );
 /**
  * This Add the button on checkout page
  *
@@ -262,12 +262,9 @@ add_action( 'admin_footer', 'auropay_refund_js' );
 if (!function_exists('auropay_refund_order')) {
 	function auropay_refund_order()
 	{
-		if (isset($_POST['auropay-refund-form-nonce']) && ! wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['auropay-refund-form-nonce'])), 'auropay_refund_form_action')) {
+		if (! isset($_POST['auropay-refund-form-nonce']) || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['auropay-refund-form-nonce'])), 'auropay_refund_form_action') || ! current_user_can('edit_posts')) {
 			wp_send_json_error(__('Nonce refund auropay verification failed.', 'auropay-gateway'));
-		}
-
-		if (!current_user_can('edit_posts')) {
-			wp_send_json_error('Permission denied.');
+			wp_die();
 		}
 
 		if (isset($_POST['refund_action']) && 'refund_order' == $_POST['refund_action']) {

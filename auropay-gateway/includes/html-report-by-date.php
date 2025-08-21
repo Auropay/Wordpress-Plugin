@@ -161,7 +161,7 @@ function auropay_enqueue_report( $current_range, $chart_colours, $barwidth, $cha
 	);
 
 	// Pass dynamic data from PHP to JavaScript (current_range)
-	wp_localize_script( 'report-by-date-js', 'report_vars', array(
+	wp_localize_script( 'report-by-date-js', 'auropay_report_vars', array(
 		'current_range' => $current_range,
 		'chart_colours' => $chart_colours,
 		'barwidth' => $barwidth,

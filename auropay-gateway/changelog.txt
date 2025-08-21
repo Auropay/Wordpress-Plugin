@@ -1,5 +1,8 @@
 *** Changelog ***
 
+= 2025-08-20 - version 1.0.7
+* Fixed the WordPress standard issues
+
 = 2025-08-01 - version 1.0.6
 * Fixed the WordPress standard issues
 

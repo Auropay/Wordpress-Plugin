@@ -1,13 +1,12 @@
 let main_chart;
 
 jQuery(function () {
-  const order_data = report_vars.chart_data;
+  const order_data = auropay_report_vars.chart_data;
   const ctx = document.getElementById('main_chart_canvas').getContext('2d');
-console.log(report_vars)
   // Convert timestamp to readable date
   const formatDate = ts => {
 	  const d = new Date(ts);
-	  if (report_vars.current_range === 'year') {
+	  if (auropay_report_vars.current_range === 'year') {
 		  return d.toLocaleDateString('en-GB', {
 			  month: 'short',
 			  year: 'numeric'
@@ -28,7 +27,7 @@ console.log(report_vars)
   const extractAmounts = arr => arr.map(item => item[1]);
 
   const getDatasets = (highlight = '', type = 'line') => {
-    const c = report_vars.chart_colours;
+    const c = auropay_report_vars.chart_colours;
     const datasetOpts = (label, data, color, isHighlight) => ({
       label,
       data: extractAmounts(data),
@@ -42,9 +41,9 @@ console.log(report_vars)
     });
 
     const datasets = {
-      sale: datasetOpts(report_vars.gross_sale_amount, order_data.sale_amount, c.sales_color, highlight === 'sale'),
-      refunded: datasetOpts(report_vars.refund_amount, order_data.refund_amount, c.refund_color, highlight === 'refunded'),
-      failed: datasetOpts(report_vars.failed_amount, order_data.failed_amount, c.failed_color, highlight === 'failed')
+      sale: datasetOpts(auropay_report_vars.gross_sale_amount, order_data.sale_amount, c.sales_color, highlight === 'sale'),
+      refunded: datasetOpts(auropay_report_vars.refund_amount, order_data.refund_amount, c.refund_color, highlight === 'refunded'),
+      failed: datasetOpts(auropay_report_vars.failed_amount, order_data.failed_amount, c.failed_color, highlight === 'failed')
     };
 
     return highlight && datasets[highlight] ? [datasets[highlight]] : Object.values(datasets);
@@ -120,7 +119,7 @@ console.log(report_vars)
     jQuery('.odate_range').removeClass('active');
   });
 
-  if (report_vars.current_range === 'custom') jQuery('.custom').show();
+  if (auropay_report_vars.current_range === 'custom') jQuery('.custom').show();
 
   jQuery('#from_datepicker').datepicker({
     changeMonth: true, changeYear: true, dateFormat: 'dd-mm-yy', maxDate: 0,

@@ -1,9 +1,9 @@
 === AuroPay Gateway ===
-Contributors: WordPress,developerspayments12
+Contributors: auropay
 Tags: auropay, payment, gateway
 Requires at least: 5.6
 Tested up to: 6.8
-Stable tag: 1.0.6
+Stable tag: 1.0.7
 Requires PHP: 7.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -13,7 +13,7 @@ Allows you to easily build payment buttons on your WordPress website and accept 
 == Description ==
 
 This is the official AuroPay Gateway plugin for AuroPay merchants. It allows you to:
-1. Add the [AURP] shortcode anywhere in a post or page to display a payment button.
+1. Add the [AUROPAY] shortcode anywhere in a post or page to display a payment button.
 2. Specify the amount, phone number, and email on the checkout page.
 3. Let the plugin handle and complete the payment process.
 
@@ -28,7 +28,7 @@ Developed by AuroPay.net
 
 1. Visit the AuroPay settings page.
 2. Click on AuroPay to edit the settings. 
-3. Add shortcode [AURP] to add the pay button. 
+3. Add shortcode [AUROPAY] to add the pay button. 
 
 == Frequently Asked Questions ==
 
@@ -60,9 +60,12 @@ Yes, it does - Production and Test (sandbox) mode is driven by the API keys you 
 = 1.0.6 =
 * Fixed the WordPress submission issues
 
+= 1.0.7 =
+* Fixed the WordPress submission issues
+
 == Upgrade Notice ==
 
-= 1.0.6=
+= 1.0.7=
 * Fixed the WordPress submission issue
 
 == License ==
